@@ -4,6 +4,7 @@
  *
  * تشغيل (من مجلد kitty-learn):
  *   node scripts/generate-all-words-tts.mjs
+ *   node scripts/generate-all-words-tts.mjs --phase2-only   # المشاعر + الفضاء + الروتين فقط
  */
 
 import fs from "fs";
@@ -200,8 +201,10 @@ function englishWords(n) {
 // تجميع قوائم البيانات للتحويل إلى صوت
 // ----------------------------------------------------
 async function main() {
+  var phase2Only = process.argv.includes("--phase2-only");
   var apiKey = process.env.GEMINI_API_KEY;
-  var model = "gemini-2.5-pro-preview-tts";
+  var model =
+    process.env.GEMINI_TTS_MODEL || "gemini-2.5-pro-preview-tts";
 
   if (!apiKey || !String(apiKey).trim()) {
     console.error("يرجى التأكد من وجود GEMINI_API_KEY في البيئة المحيطة أو في ملف .env");
@@ -211,28 +214,32 @@ async function main() {
   // الأصوات المدعومة والمقترحة من مكتبة جوجل
   var voiceName = "Leda"; // صوت ناعم وواضح ومناسب للأطفال
 
+  console.log(phase2Only ? "وضع المرحلة 2 فقط (مشاعر + فضاء + روتين)" : "وضع كامل");
   console.log("نموذج TTS المستخدم:", model);
   console.log("الصوت المعتمد:", voiceName);
 
   // تجهيز مجلدات المخرجات الصوتية
-  const folders = [
-    "alphabet/ar", "alphabet/en",
-    "animals/ar", "animals/en",
-    "colors/ar", "colors/en",
-    "shapes/ar", "shapes/en",
-    "numbers/ar", "numbers/en",
-    "family",
-    "prayer/ar", "prayer/en",
-    "emotions/ar", "emotions/en",
-    "space/ar", "space/en",
-    "routine/ar", "routine/en"
-  ];
+  const folders = phase2Only
+    ? ["emotions/ar", "emotions/en", "space/ar", "space/en", "routine/ar", "routine/en"]
+    : [
+        "alphabet/ar", "alphabet/en",
+        "animals/ar", "animals/en",
+        "colors/ar", "colors/en",
+        "shapes/ar", "shapes/en",
+        "numbers/ar", "numbers/en",
+        "family",
+        "prayer/ar", "prayer/en",
+        "emotions/ar", "emotions/en",
+        "space/ar", "space/en",
+        "routine/ar", "routine/en",
+      ];
   for (const f of folders) {
     fs.mkdirSync(path.join(ROOT, "data", "audio", f), { recursive: true });
   }
 
   const ttsQueue = [];
 
+  if (!phase2Only) {
   // 1. الحروف الهجائية
   const arLetters = [
     { letter: "ا", name: "ألف", word: "أسد" },
@@ -423,8 +430,9 @@ async function main() {
     ttsQueue.push({ phrase: d.ar, out: `data/audio/prayer/ar/dua_${i}.wav`, lang: "ar" });
     ttsQueue.push({ phrase: d.en, out: `data/audio/prayer/en/dua_${i}.wav`, lang: "en" });
   });
+  }
 
-  // 7. المشاعر
+  // 7. المشاعر (المرحلة 2)
   const emotions = [
     { key: "happy", ar: "سعيد", en: "Happy" },
     { key: "sad", ar: "حزين", en: "Sad" },
