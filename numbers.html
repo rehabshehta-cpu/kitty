@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — الأرقام وعمليات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body class="page-numbers-ar">
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+      </svg>
+      <p dir="rtl">أرقام ولعب<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true"><div class="cloud cloud-sm"></div></div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap numbers-ar-wrap">
+      <header class="site-header kid-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="القائمة" dir="ltr">
+          <a href="index.html">Home</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="numbers.html" aria-current="page">Numbers</a>
+          <a href="colors.html">Colors</a>
+          <a href="words.html">Words</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="موسيقى" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="سمة" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main class="numbers-ar-main">
+        <header class="kid-alphabet-hero numbers-ar-hero">
+          <p class="kid-kicker" dir="ltr">🔢 Numbers &amp; fun maths</p>
+          <h1 class="kid-page-title">الأرقام من ١ إلى ١٠٠ + عمليات بسيطة للصغار</h1>
+          <p class="kid-page-sub">
+            اختاري تبويب الإنجليزي أو العربي زي صفحة الحروف — كل تبويب يورّيك الأرقام والكلمات بلغة واحدة؛ اضغطي على الرقم تسمعي نطقه.
+            تمارين الجمع والطرح والضرب والقسمة مناسبة من حوالي ٣ لـ ٨ سنين (ناتج التمارين حتى ١٠). كل إجابة صحيحة تكسب نجمة ⭐!
+          </p>
+        </header>
+
+        <div class="numbers-lang-tabs" role="tablist" aria-label="أقسام الأرقام">
+          <button type="button" class="numbers-lang-tab active" role="tab" aria-selected="true" data-tab="nums">
+            ١ ← ١٠٠ الأرقام
+          </button>
+          <button type="button" class="numbers-lang-tab" role="tab" aria-selected="false" data-tab="add">جمع ➕</button>
+          <button type="button" class="numbers-lang-tab" role="tab" aria-selected="false" data-tab="sub">طرح ➖</button>
+          <button type="button" class="numbers-lang-tab" role="tab" aria-selected="false" data-tab="mul">ضرب ✖️</button>
+          <button type="button" class="numbers-lang-tab" role="tab" aria-selected="false" data-tab="div">قسمة ➗</button>
+        </div>
+
+        <section id="panel-nums" class="numbers-tab-panel active lesson-page-panel">
+          <h2 class="numbers-panel-title">جدول الأرقام</h2>
+          <div class="alphabet-lang-tabs numbers-script-tabs" role="tablist" aria-label="لغة عرض الأرقام">
+            <button
+              type="button"
+              class="alphabet-lang-tab active"
+              id="nums-tab-en"
+              role="tab"
+              aria-selected="true"
+              data-nums-lang="en"
+            >
+              🔢 English 1–100
+            </button>
+            <button type="button" class="alphabet-lang-tab" id="nums-tab-ar" role="tab" aria-selected="false" data-nums-lang="ar">
+              🔢 الأرقام العربية ١–١٠٠
+            </button>
+          </div>
+          <div id="numbers-grid" class="numbers-grid-100"></div>
+        </section>
+
+        <section id="panel-add" class="numbers-tab-panel lesson-page-panel" hidden>
+          <h2 class="numbers-panel-title">تمرين الجمع — مجموع بسيط حتى ١٠</h2>
+          <div class="math-card-inner">
+            <p id="quiz-add-q" class="math-q-big"></p>
+            <div id="quiz-add-choices" class="math-choices-row"></div>
+            <p id="quiz-add-feedback" class="math-feedback"></p>
+            <button type="button" class="btn btn-secondary btn-fat" id="quiz-add-new">سؤال جديد ✨</button>
+          </div>
+        </section>
+
+        <section id="panel-sub" class="numbers-tab-panel lesson-page-panel" hidden>
+          <h2 class="numbers-panel-title">تمرين الطرح — ناتج من ١ لـ ٩</h2>
+          <div class="math-card-inner">
+            <p id="quiz-sub-q" class="math-q-big"></p>
+            <div id="quiz-sub-choices" class="math-choices-row"></div>
+            <p id="quiz-sub-feedback" class="math-feedback"></p>
+            <button type="button" class="btn btn-secondary btn-fat" id="quiz-sub-new">سؤال جديد ✨</button>
+          </div>
+        </section>
+
+        <section id="panel-mul" class="numbers-tab-panel lesson-page-panel" hidden>
+          <h2 class="numbers-panel-title">تمرين الضرب — ناتج حتى ١٠</h2>
+          <div class="math-card-inner">
+            <p id="quiz-mul-q" class="math-q-big"></p>
+            <div id="quiz-mul-choices" class="math-choices-row"></div>
+            <p id="quiz-mul-feedback" class="math-feedback"></p>
+            <button type="button" class="btn btn-secondary btn-fat" id="quiz-mul-new">سؤال جديد ✨</button>
+          </div>
+        </section>
+
+        <section id="panel-div" class="numbers-tab-panel lesson-page-panel" hidden>
+          <h2 class="numbers-panel-title">تمرين القسمة — بدون باقي (أعداد صغيرة)</h2>
+          <div class="math-card-inner">
+            <p id="quiz-div-q" class="math-q-big"></p>
+            <div id="quiz-div-choices" class="math-choices-row"></div>
+            <p id="quiz-div-feedback" class="math-feedback"></p>
+            <button type="button" class="btn btn-secondary btn-fat" id="quiz-div-new">سؤال جديد ✨</button>
+          </div>
+        </section>
+
+        <div class="kid-done-row">
+          <button type="button" class="btn btn-primary btn-fat" id="lesson-done">خلّصتُ الأرقام والعمليات!</button>
+          <p class="kid-done-note">يُخصّص نجمة واحدة عند كل إجابة صحيحة في التمارين 🌟</p>
+        </div>
+      </main>
+
+      <footer class="site-footer"><p><a href="index.html" dir="ltr">← Back home</a></p></footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden>عدّي معايا!</div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="مساعد القطة">
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/kitty-learn-numbers.js"></script>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+{
+  "ttsVoice": "Leda",
+  "elevenlabsVoice": "EXAVITQu4vr4xnSDxMaL",
+  "items": [
+    {
+      "id": "tita-nora",
+      "phrase": "تيتا نورا",
+      "hint": "تيتا حبيبة القلب",
+      "emoji": "👵",
+      "mascot": "دي تيتا نورا — أحلى تيتا!",
+      "audio": "data/audio/family/tita-nora.wav"
+    },
+    {
+      "id": "gido-abdo",
+      "phrase": "جدو عبده",
+      "hint": "جدو حبيبنا",
+      "emoji": "👴",
+      "mascot": "دي جدو عبده — جدو قوي وحبوب!",
+      "audio": "data/audio/family/gido-abdo.wav"
+    },
+    {
+      "id": "ammo-karim",
+      "phrase": "عمو كريم",
+      "hint": "عمّو الغالي",
+      "emoji": "🧔",
+      "mascot": "ده عمو كريم — عمو دايمًا لطيف!",
+      "audio": "data/audio/family/ammo-karim.wav"
+    },
+    {
+      "id": "shorouk",
+      "phrase": "شروق",
+      "hint": "شروق الغالية",
+      "emoji": "☀️",
+      "mascot": "دي شروق — نورتينا!",
+      "audio": "data/audio/family/shorouk.wav"
+    },
+    {
+      "id": "shahd",
+      "phrase": "شهد",
+      "hint": "شهد حبيبتي",
+      "emoji": "🌸",
+      "mascot": "دي شهد — زي العسل!",
+      "audio": "data/audio/family/shahd.wav"
+    },
+    {
+      "id": "ruwayda",
+      "phrase": "رويدا",
+      "hint": "رويدا الغالية",
+      "emoji": "🌷",
+      "mascot": "دي رويدا — قمر!",
+      "audio": "data/audio/family/ruwayda.wav"
+    },
+    {
+      "id": "lolly",
+      "phrase": "لولي",
+      "hint": "لولي القمر",
+      "emoji": "🎀",
+      "mascot": "دي لولي — يا قلب!",
+      "audio": "data/audio/family/lolly.wav"
+    },
+    {
+      "id": "omar",
+      "phrase": "عمر",
+      "hint": "عمر حبيبنا",
+      "emoji": "👦",
+      "mascot": "ده عمر — بطل صغير!",
+      "audio": "data/audio/family/omar.wav"
+    }
+  ]
+}

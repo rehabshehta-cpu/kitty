@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body>
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+      </svg>
+      <p>Loading games<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true">
+      <div class="cloud cloud-sm"></div>
+      <div class="cloud cloud-lg"></div>
+    </div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap">
+      <header class="site-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="Main">
+          <a href="index.html">Home</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="numbers.html">Numbers</a>
+          <a href="colors.html">Colors</a>
+          <a href="animals.html">Animals</a>
+          <a href="words.html">Family words</a>
+          <a href="prayer.html">Prayer &amp; Manners</a>
+          <a href="games.html" aria-current="page">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="Toggle soft music" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="Toggle cozy dark theme" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main>
+        <h1 class="section-title">Mini Games Playground</h1>
+        <p style="text-align: center; color: var(--ink-soft); margin-top: 0">
+          Play gently — every correct answer brings sparkly stars!
+        </p>
+
+        <div class="games-tabs" role="tablist" aria-label="Choose a game">
+          <button type="button" class="active" data-tab="match" role="tab" aria-selected="true">Picture ↔ Word</button>
+          <button type="button" data-tab="color" role="tab" aria-selected="false">Pick the Color</button>
+          <button type="button" data-tab="drag" role="tab" aria-selected="false">Drag Letters</button>
+          <button type="button" data-tab="memory" role="tab" aria-selected="false">Memory Cards</button>
+        </div>
+
+        <section id="panel-match" class="game-panel active" role="tabpanel">
+          <h2 style="font-family: var(--font-display); margin-top: 0">Match the picture with the word</h2>
+          <p>Select an emoji, then tap its matching word.</p>
+          <div id="match-grid" class="game-grid match-grid"></div>
+          <p id="match-feedback" class="game-feedback"></p>
+          <button type="button" class="btn btn-small btn-secondary" id="match-reset">Shuffle again</button>
+        </section>
+
+        <section id="panel-color" class="game-panel" role="tabpanel">
+          <h2 style="font-family: var(--font-display); margin-top: 0">Choose the correct color</h2>
+          <p id="color-prompt"></p>
+          <div id="color-options" class="color-options"></div>
+          <p id="color-feedback" class="game-feedback"></p>
+        </section>
+
+        <section id="panel-drag" class="game-panel" role="tabpanel">
+          <h2 style="font-family: var(--font-display); margin-top: 0">Drag letters to spell CAT</h2>
+          <p>Drag letters into the boxes — or <strong>tap</strong> a letter, then <strong>tap</strong> a box (great on tablets!).</p>
+          <div id="drag-bank" class="drag-bank"></div>
+          <div id="drag-targets" class="drag-targets" aria-label="Letter slots"></div>
+          <p id="drag-feedback" class="game-feedback"></p>
+          <button type="button" class="btn btn-small btn-secondary" id="drag-reset">Reset puzzle</button>
+        </section>
+
+        <section id="panel-memory" class="game-panel" role="tabpanel">
+          <h2 style="font-family: var(--font-display); margin-top: 0">Memory stars</h2>
+          <p>Flip two cards at a time and find the pairs.</p>
+          <div id="memory-board" class="memory-board"></div>
+          <p id="memory-feedback" class="game-feedback"></p>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p><a href="index.html">← Back home</a></p>
+      </footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden>You’ve got this!</div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="Kitty helper">
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/kitty-learn-games.js"></script>
+  </body>
+</html>

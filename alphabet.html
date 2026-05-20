@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — الحروف ✏️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body class="page-alphabet-kids">
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+        <ellipse cx="82" cy="108" rx="10" ry="14" fill="#3D3558" />
+        <ellipse cx="138" cy="108" rx="10" ry="14" fill="#3D3558" />
+      </svg>
+      <p dir="rtl">جاري التحميل<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true">
+      <div class="cloud cloud-sm"></div>
+      <div class="cloud cloud-md"></div>
+    </div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap alphabet-kid-wrap">
+      <header class="site-header kid-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="القائمة" dir="ltr">
+          <a href="index.html">Home</a>
+          <a href="alphabet.html" aria-current="page">Alphabet</a>
+          <a href="numbers.html">Numbers</a>
+          <a href="words.html">Words</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="موسيقى" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="سمة" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main class="kid-alphabet-main">
+        <header class="kid-alphabet-hero">
+          <p class="kid-kicker" dir="ltr">✨ Alphabet Playroom</p>
+          <h1 class="kid-page-title" dir="rtl">تعلّم الحرف الإنجليزي والعربي!</h1>
+          <p class="kid-page-sub" dir="rtl">
+            اختاري اللغة، اسمعي الصوت، ثم تدرّبي تكتبي الحرف فوق الخطوط زي الدفتر 📓
+          </p>
+        </header>
+
+        <div class="alphabet-lang-tabs" role="tablist" aria-label="اختيار اللغة">
+          <button type="button" class="alphabet-lang-tab active" id="tab-en" role="tab" aria-selected="true" data-lang="en">
+            🔤 English A–Z
+          </button>
+          <button type="button" class="alphabet-lang-tab" id="tab-ar" role="tab" aria-selected="false" data-lang="ar">
+            الحروف العربية
+          </button>
+        </div>
+
+        <div id="alphabet-toolbar" class="alphabet-toolbar kid-letter-strip"></div>
+
+        <section id="letter-display" class="letter-display kid-letter-card">
+          <p class="big-letter kid-big-letter" id="big-letter">A</p>
+          <div class="word-row">
+            <span class="word-emoji" id="letter-emoji" aria-hidden="true">🍎</span>
+            <p class="example-word kid-example-word" id="example-word">Apple!</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-fat" id="speak-btn">🔊 اسمعي النطق</button>
+        </section>
+
+        <section class="trace-zone kid-panel" aria-labelledby="trace-heading">
+          <h2 id="trace-heading" class="trace-zone-title" dir="rtl">✏️ تمرين الكتابة على الخطوط</h2>
+          <p class="trace-zone-hint" dir="rtl">
+            الحرف الرمادي الخفيف دي «مرشد» — امشي فوقه بالقلم أو الإصبع من غير ما تطلع برّه الخطوط قدر الإمكان.
+          </p>
+          <div class="trace-notebook" dir="ltr">
+            <div class="trace-lines-bg" aria-hidden="true"></div>
+            <div class="trace-stack" id="trace-stack">
+              <span class="trace-guide-letter" id="trace-guide" aria-hidden="true">A</span>
+              <canvas id="trace-canvas" aria-label="لوحة الكتابة"></canvas>
+            </div>
+          </div>
+          <div class="trace-actions">
+            <button type="button" class="btn btn-secondary btn-fat" id="trace-clear">🧹 امسحي وحاولي تاني</button>
+            <button type="button" class="btn btn-primary btn-fat" id="trace-done">⭐ خلّصت الكتابة!</button>
+          </div>
+        </section>
+
+        <div class="kid-done-row">
+          <button type="button" class="btn btn-primary btn-fat" id="alphabet-complete">خلّصتُ استكشاف الحروف!</button>
+          <p class="kid-done-note" dir="rtl">اضغطي مرة واحدة للنجوم والشارة 🏅</p>
+        </div>
+      </main>
+
+      <footer class="site-footer">
+        <p><a href="index.html" dir="ltr">← Back home</a></p>
+      </footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden>يلا نكتب!</div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="مساعد القطة">
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/kitty-learn-trace.js"></script>
+    <script src="js/kitty-learn-alphabet.js"></script>
+  </body>
+</html>

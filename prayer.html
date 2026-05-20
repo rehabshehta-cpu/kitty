@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — الصلاة والآداب</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body class="page-prayer-kids" data-kitty-page="prayer">
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+      </svg>
+      <p dir="rtl">صفحة هادئة<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true">
+      <div class="cloud cloud-md"></div>
+      <div class="cloud cloud-lg"></div>
+    </div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap prayer-kids-wrap">
+      <header class="site-header kid-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="القائمة" dir="ltr">
+          <a href="index.html">Home</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="numbers.html">Numbers</a>
+          <a href="colors.html">Colors</a>
+          <a href="animals.html">Animals</a>
+          <a href="words.html">Words</a>
+          <a href="prayer.html" aria-current="page">Prayer</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="موسيقى" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="سمة" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main class="prayer-kids-main" id="prayer-main">
+        <div class="alphabet-lang-tabs prayer-lang-tabs" role="tablist" aria-label="لغة الصفحة">
+          <button type="button" class="alphabet-lang-tab active" id="prayer-tab-ar" role="tab" aria-selected="true">
+            🕌 العربية
+          </button>
+          <button type="button" class="alphabet-lang-tab" id="prayer-tab-en" role="tab" aria-selected="false">
+            🕌 English
+          </button>
+        </div>
+
+        <h1 class="kid-page-title prayer-page-title" id="prayer-page-title"></h1>
+        <p class="kid-page-sub prayer-page-intro" id="prayer-intro"></p>
+
+        <section class="lesson-page-panel prayer-panel">
+          <h2 class="numbers-panel-title prayer-section-title" id="wudu-heading"></h2>
+          <div id="wudu-grid" class="wudu-steps-grid"></div>
+          <div class="dua-box" id="wudu-note"></div>
+        </section>
+
+        <section class="lesson-page-panel prayer-panel">
+          <h2 class="numbers-panel-title prayer-section-title" id="prayer-heading"></h2>
+          <div class="steps-list" id="prayer-steps-list"></div>
+        </section>
+
+        <section class="lesson-page-panel prayer-panel">
+          <h2 class="numbers-panel-title prayer-section-title" id="duas-heading"></h2>
+          <div class="step-card prayer-dua-card">
+            <h3 id="dua-before-t"></h3>
+            <div class="dua-box" id="dua-before-b"></div>
+          </div>
+          <div class="step-card prayer-dua-card">
+            <h3 id="dua-after-t"></h3>
+            <div class="dua-box" id="dua-after-b"></div>
+          </div>
+          <div class="step-card prayer-dua-card">
+            <h3 id="dua-sleep-t"></h3>
+            <div class="dua-box" id="dua-sleep-b"></div>
+          </div>
+        </section>
+
+        <section class="lesson-page-panel prayer-panel" id="manners">
+          <h2 class="numbers-panel-title prayer-section-title" id="manners-heading"></h2>
+          <div class="steps-list" id="manners-list"></div>
+          <div class="prayer-manners-cta">
+            <button type="button" class="btn btn-primary btn-fat" id="manners-star"></button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p><a href="index.html" id="footer-home"></a></p>
+      </footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden></div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="مساعد القطة">
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/kitty-learn-prayer.js"></script>
+  </body>
+</html>

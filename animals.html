@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — الحيوانات 🦁</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body class="page-animals-zoo">
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+      </svg>
+      <p dir="rtl">أصدقاء الحديقة<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true"><div class="cloud cloud-sm"></div><div class="cloud cloud-md"></div></div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap animals-zoo-wrap">
+      <header class="site-header kid-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="القائمة" dir="ltr">
+          <a href="index.html">Home</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="numbers.html">Numbers</a>
+          <a href="colors.html">Colors</a>
+          <a href="animals.html" aria-current="page">Animals</a>
+          <a href="words.html">Words</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="موسيقى" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="سمة" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main class="animals-zoo-main">
+        <header class="kid-alphabet-hero animals-zoo-hero">
+          <p class="kid-kicker" dir="ltr">🦁 Zoo pals</p>
+          <h1 class="kid-page-title">تعرّف على الحيوانات — عربي أو إنجليزي!</h1>
+          <p class="kid-page-sub" dir="rtl">
+            اختاري اللغة أولاً (عربي أو إنجليزي) زي باقي الدروس؛ الاسم والصوت يكونان بلغة واحدة فقط. الحيوان يعمل حركة واضحة ومرحة عند الاختيار
+            🎭 ثم تقدري تلوّنيه بالألوان ✨
+          </p>
+        </header>
+
+        <div class="alphabet-lang-tabs animals-lang-tabs" role="tablist" aria-label="لغة الحيوانات">
+          <button type="button" class="alphabet-lang-tab active" id="animal-tab-ar" role="tab" aria-selected="true" aria-controls="animal-toolbar">
+            🦁 العربية
+          </button>
+          <button type="button" class="alphabet-lang-tab" id="animal-tab-en" role="tab" aria-selected="false" aria-controls="animal-toolbar">
+            🦁 English
+          </button>
+        </div>
+
+        <div id="animal-toolbar" class="animals-zoo-toolbar" aria-label="اختيار الحيوان"></div>
+
+        <section class="lesson-page-panel animal-stage-panel" aria-labelledby="animal-stage-heading">
+          <h2 id="animal-stage-heading" class="numbers-panel-title">الرسم والتلوين 🖍️</h2>
+          <div id="animal-showcase" class="animal-showcase">
+            <p id="animal-emoji-big" class="animal-emoji-mega" aria-hidden="true">🐱</p>
+            <div id="animal-stage" class="animal-stage svg-frame">
+              <div id="animal-svg-slot"></div>
+            </div>
+          </div>
+          <p id="animal-label-main" class="animal-label-main" dir="rtl">قطة</p>
+          <p id="animal-palette-hint" class="animal-palette-hint" dir="rtl">🎨 اختاري لوناً ثم المسّي جزءاً من الرسم لتلوينه</p>
+          <div id="animal-palette-row" class="color-palette-row animal-palette-row" aria-label="ألوان التلوين"></div>
+          <div class="animals-zoo-actions">
+            <button type="button" class="btn btn-secondary btn-fat" id="animal-hear-again">🔊 اسمعي مرة ثانية</button>
+          </div>
+          <div style="text-align: center; margin-top: 1.5rem">
+            <button type="button" class="btn btn-primary btn-fat" id="lesson-done">أنا تعرّفت على الحيوانات! ⭐</button>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer"><p><a href="index.html">← الرجوع للرئيسية</a></p></footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden></div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="مساعدة القطة">
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/kitty-learn-animals.js"></script>
+  </body>
+</html>

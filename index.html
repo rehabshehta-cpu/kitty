@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Kitty Learn — a magical, playful learning world for kids ages 3–8."
+    />
+    <title>Kitty Learn — Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body data-kitty-page="home">
+    <div id="loading-screen" class="loading-screen" role="status" aria-live="polite">
+      <svg
+        class="loader-cat"
+        viewBox="0 0 220 200"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path d="M52 88 Q42 35 58 28 Q72 22 88 62" fill="#FFB896" />
+        <path d="M168 88 Q178 35 162 28 Q148 22 132 62" fill="#FFB896" />
+        <ellipse cx="110" cy="118" rx="78" ry="70" fill="#FFE5CC" />
+        <ellipse cx="82" cy="108" rx="14" ry="18" fill="#3D3558" />
+        <ellipse cx="138" cy="108" rx="14" ry="18" fill="#3D3558" />
+        <ellipse cx="86" cy="102" rx="5" ry="6" fill="#fff" />
+        <ellipse cx="142" cy="102" rx="5" ry="6" fill="#fff" />
+        <path d="M104 128 Q110 136 116 128 Q110 132 104 128" fill="#FF8FAB" />
+        <path
+          d="M92 142 Q110 158 128 142"
+          stroke="#C97B86"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"
+        />
+      </svg>
+      <p>Kitty Learn is loading<span class="loading-dots"></span></p>
+    </div>
+
+    <div class="sky-layer" aria-hidden="true">
+      <div class="cloud cloud-sm"></div>
+      <div class="cloud cloud-md"></div>
+      <div class="cloud cloud-lg"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap">
+      <header class="site-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+            <ellipse cx="82" cy="108" rx="10" ry="14" fill="#3D3558" />
+            <ellipse cx="138" cy="108" rx="10" ry="14" fill="#3D3558" />
+            <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill" title="Stars and level">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="Main">
+          <a href="index.html" aria-current="page">Home</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="numbers.html">Numbers</a>
+          <a href="colors.html">Colors</a>
+          <a href="animals.html">Animals</a>
+          <a href="words.html">Family words</a>
+          <a href="prayer.html">Prayer &amp; Manners</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="Toggle soft music" aria-pressed="false" title="Music">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="Toggle cozy dark theme" aria-pressed="false" title="Theme">🌙</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-text">
+            <h1>Welcome to Kitty Learn!</h1>
+            <p class="subtitle">Learn, play, and explore with your cute cat friend!</p>
+            <a class="btn btn-primary" href="#lessons" id="start-learning">Start Learning ✨</a>
+          </div>
+          <div class="hero-mascot">
+            <svg
+              class="mascot-svg"
+              viewBox="0 0 220 200"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path d="M52 88 Q42 35 58 28 Q72 22 88 62" fill="#FFB896" />
+              <path d="M168 88 Q178 35 162 28 Q148 22 132 62" fill="#FFB896" />
+              <path d="M58 72 Q52 45 65 40 Q78 38 88 65" fill="#FFCEBF" />
+              <path d="M162 72 Q168 45 155 40 Q142 38 132 65" fill="#FFCEBF" />
+              <ellipse cx="110" cy="118" rx="78" ry="70" fill="#FFE5CC" />
+              <ellipse cx="62" cy="124" rx="14" ry="10" fill="#FFB8C8" opacity="0.55" />
+              <ellipse cx="158" cy="124" rx="14" ry="10" fill="#FFB8C8" opacity="0.55" />
+              <ellipse cx="82" cy="108" rx="14" ry="18" fill="#3D3558" />
+              <ellipse cx="138" cy="108" rx="14" ry="18" fill="#3D3558" />
+              <ellipse cx="86" cy="102" rx="5" ry="6" fill="#fff" />
+              <ellipse cx="142" cy="102" rx="5" ry="6" fill="#fff" />
+              <path d="M104 128 Q110 136 116 128 Q110 132 104 128" fill="#FF8FAB" />
+              <path
+                d="M92 142 Q110 158 128 142"
+                stroke="#C97B86"
+                stroke-width="4"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <path d="M44 118 H72 M44 132 H74 M176 118 H148 M176 132 H146" stroke="#E8B4A0" stroke-width="3" stroke-linecap="round" />
+              <ellipse cx="78" cy="178" rx="22" ry="14" fill="#FFE5CC" />
+              <ellipse cx="142" cy="178" rx="22" ry="14" fill="#FFE5CC" />
+            </svg>
+          </div>
+        </section>
+
+        <h2 class="section-title" id="lessons">Pick a Learning Adventure</h2>
+        <div class="cards-grid">
+          <a class="lesson-card" href="alphabet.html">
+            <span class="card-icon" aria-hidden="true">🔤</span>
+            <h3>Alphabet Learning</h3>
+            <p>English &amp; Arabic letters, tracing on notebook lines, sounds, and pictures.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="numbers.html">
+            <span class="card-icon" aria-hidden="true">🔢</span>
+            <h3>Numbers</h3>
+            <p>Arabic-style numerals 1–100, hear names in Arabic, plus add/subtract/multiply/divide games.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="colors.html">
+            <span class="card-icon" aria-hidden="true">🎨</span>
+            <h3>Colors &amp; Shapes</h3>
+            <p>Arabic color names, listen &amp; tap shapes, and paint built-in pictures.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="animals.html">
+            <span class="card-icon" aria-hidden="true">🦁</span>
+            <h3>Animals</h3>
+            <p>Arabic &amp; English names, playful motion &amp; sounds, and tap-to-color zoo pals.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="words.html">
+            <span class="card-icon" aria-hidden="true">💬</span>
+            <h3>Family words · كلمات العيلة</h3>
+            <p>Hear loving Arabic phrases — names from your own family list.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="prayer.html">
+            <span class="card-icon" aria-hidden="true">🕌</span>
+            <h3>Prayer Basics</h3>
+            <p>Wudu, prayer steps, little duas — calm and kind.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="prayer.html#manners">
+            <span class="card-icon" aria-hidden="true">💝</span>
+            <h3>Good Manners</h3>
+            <p>Sharing smiles: respect, kindness, and gratitude.</p>
+            <span class="card-cta">Enter lesson →</span>
+          </a>
+          <a class="lesson-card" href="games.html">
+            <span class="card-icon" aria-hidden="true">🎮</span>
+            <h3>Interactive Games</h3>
+            <p>Match, remember, drag letters, and win sparkly stars!</p>
+            <span class="card-cta">Play now →</span>
+          </a>
+        </div>
+
+        <section class="rewards-panel" aria-labelledby="rewards-heading">
+          <h2 id="rewards-heading">Your Rewards &amp; Kitty Closet</h2>
+          <p style="margin-top: 0; color: var(--ink-soft)">
+            Earn stars by playing games and exploring lessons. Unlock badges and dress up your helper cat!
+          </p>
+          <div class="rewards-row" style="margin-bottom: 1rem">
+            <span>Progress to next level:</span>
+            <div class="bar-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="bar-fill" id="xp-bar" style="width: 8%"></div>
+            </div>
+          </div>
+          <div class="rewards-row" style="margin-bottom: 0.75rem">
+            <strong>Badges:</strong>
+            <span class="badge-chip locked" data-badge="star">⭐ Star Starter</span>
+            <span class="badge-chip locked" data-badge="explorer">🧭 Little Explorer</span>
+            <span class="badge-chip locked" data-badge="super">🏆 Super Learner</span>
+            <span class="badge-chip locked" data-badge="alphabet">🔤 Alphabet Friend</span>
+            <span class="badge-chip locked" data-badge="manners">💝 Kind Friend</span>
+          </div>
+          <div class="rewards-row" style="align-items: center">
+            <strong>Cat accessories:</strong>
+            <button type="button" class="accessory-slot" data-accessory="bow" title="Bow (unlock with stars)">🎀</button>
+            <button type="button" class="accessory-slot" data-accessory="glasses" title="Glasses">👓</button>
+            <button type="button" class="accessory-slot" data-accessory="crown" title="Crown">👑</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Kitty Learn · Made with love for curious kids · Ask a grown-up to explore with you.</p>
+      </footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden>Hi friend!</div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg
+          class="dock-cat"
+          viewBox="0 0 220 200"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          aria-label="Kitty helper — tap for a message"
+        >
+          <path d="M52 88 Q42 35 58 28 Q72 22 88 62" fill="#FFB896" />
+          <path d="M168 88 Q178 35 162 28 Q148 22 132 62" fill="#FFB896" />
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="85" cy="102" rx="4" ry="5" fill="#fff" />
+          <ellipse cx="141" cy="102" rx="4" ry="5" fill="#fff" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+          <path d="M94 142 Q110 152 126 142" stroke="#C97B86" stroke-width="3.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+      document.getElementById("start-learning").addEventListener("click", function () {
+        if (window.KittyLearn) KittyLearn.playSound("ok");
+      });
+    </script>
+  </body>
+</html>

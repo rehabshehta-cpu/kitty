@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — الألوان والتلوين</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body class="page-colors-ar">
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+      </svg>
+      <p dir="rtl">ألوان فرحة<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true"><div class="cloud cloud-md"></div></div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap colors-ar-wrap">
+      <header class="site-header kid-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="القائمة" dir="ltr">
+          <a href="index.html">Home</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="numbers.html">Numbers</a>
+          <a href="colors.html" aria-current="page">Colors</a>
+          <a href="words.html">Words</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="موسيقى" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="سمة" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main class="colors-ar-main">
+        <header class="kid-alphabet-hero colors-ar-hero">
+          <p class="kid-kicker" dir="ltr">🎨 Colors studio</p>
+          <h1 class="kid-page-title">ألوان وأشكال بالعربي والإنجليزي — ولوني الرسوم!</h1>
+          <p class="kid-page-sub" dir="rtl">
+            اختاري تبويب اللغة للألوان وللأشكال زي صفحة الحروف. للتلوين: اختاري اللون ثم اضغطي على جزء في الرسمة. لعبة الأشكال تكسب نجمة
+            ⭐ عند كل إجابة صحيحة.
+          </p>
+        </header>
+
+        <section class="lesson-page-panel color-learn-panel">
+          <h2 class="numbers-panel-title">الألوان</h2>
+          <div class="alphabet-lang-tabs colors-lang-tabs" role="tablist" aria-label="لغة أسماء الألوان">
+            <button type="button" class="alphabet-lang-tab" id="colors-tab-en" role="tab" aria-selected="false" data-colors-lang="en">
+              🎨 English colors
+            </button>
+            <button type="button" class="alphabet-lang-tab active" id="colors-tab-ar" role="tab" aria-selected="true" data-colors-lang="ar">
+              ألوان عربية
+            </button>
+          </div>
+          <p id="color-palette-hint" class="color-palette-hint"></p>
+          <div id="color-palette-row" class="color-palette-row"></div>
+        </section>
+
+        <section class="lesson-page-panel coloring-book-panel">
+          <h2 class="numbers-panel-title">كتاب التلوين</h2>
+          <div class="color-picture-tabs" role="tablist" aria-label="اختيار الرسمة">
+            <button type="button" class="color-pic-tab active" data-picture="house" aria-selected="true"></button>
+            <button type="button" class="color-pic-tab" data-picture="flower" aria-selected="false"></button>
+            <button type="button" class="color-pic-tab" data-picture="fish" aria-selected="false"></button>
+          </div>
+
+          <div id="picture-house" class="coloring-svg-wrap svg-frame">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 230" aria-label="رسمة بيت للتلوين">
+              <rect class="color-region" x="0" y="0" width="260" height="230" fill="#f8fafc" stroke="#64748b" stroke-width="2.5" />
+              <circle class="color-region" cx="210" cy="48" r="26" fill="#ffffff" stroke="#64748b" stroke-width="2.5" />
+              <path class="color-region" fill="#ffffff" stroke="#64748b" stroke-width="2.5" d="M130 52 L218 112 L42 112 Z" />
+              <rect class="color-region" x="58" y="112" width="144" height="102" fill="#ffffff" stroke="#64748b" stroke-width="2.5" />
+              <rect class="color-region" x="114" y="158" width="36" height="56" fill="#ffffff" stroke="#64748b" stroke-width="2.5" />
+              <rect class="color-region" x="74" y="128" width="32" height="32" fill="#ffffff" stroke="#64748b" stroke-width="2.5" />
+              <rect class="color-region" x="158" y="128" width="32" height="32" fill="#ffffff" stroke="#64748b" stroke-width="2.5" />
+            </svg>
+          </div>
+
+          <div id="picture-flower" class="coloring-svg-wrap svg-frame" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 240" aria-label="رسمة وردة للتلوين">
+              <path class="color-region" d="M102 240 L110 98 L118 240 Z" fill="#ffffff" stroke="#475569" stroke-width="2.5" />
+              <ellipse class="color-region" cx="110" cy="96" rx="22" ry="40" transform="rotate(-38 110 96)" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+              <ellipse class="color-region" cx="110" cy="96" rx="22" ry="40" transform="rotate(38 110 96)" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+              <ellipse class="color-region" cx="110" cy="96" rx="22" ry="40" transform="rotate(90 110 96)" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+              <ellipse class="color-region" cx="110" cy="96" rx="22" ry="40" transform="rotate(142 110 96)" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+              <ellipse class="color-region" cx="110" cy="96" rx="22" ry="40" transform="rotate(-142 110 96)" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+              <ellipse class="color-region" cx="110" cy="96" rx="22" ry="40" transform="rotate(-90 110 96)" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+              <circle class="color-region" cx="110" cy="96" r="16" fill="#ffffff" stroke="#475569" stroke-width="2.2" />
+            </svg>
+          </div>
+
+          <div id="picture-fish" class="coloring-svg-wrap svg-frame" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 160" aria-label="رسمة سمكة للتلوين">
+              <rect class="color-region" x="0" y="0" width="280" height="160" fill="#ecfeff" stroke="#0e7490" stroke-width="2" />
+              <ellipse class="color-region" cx="115" cy="80" rx="88" ry="48" fill="#ffffff" stroke="#334155" stroke-width="2.5" />
+              <path class="color-region" d="M203 80 L262 38 L262 122 Z" fill="#ffffff" stroke="#334155" stroke-width="2.5" />
+              <path class="color-region" d="M62 48 Q95 28 128 48" fill="#ffffff" stroke="#334155" stroke-width="2.5" />
+              <circle class="color-region" cx="168" cy="72" r="14" fill="#ffffff" stroke="#334155" stroke-width="2.5" />
+              <circle cx="172" cy="72" r="5" fill="#334155" stroke="none" />
+              <path class="color-region" d="M115 128 Q135 108 155 128" fill="#ffffff" stroke="#334155" stroke-width="2.5" />
+            </svg>
+          </div>
+        </section>
+
+        <section class="lesson-page-panel shapes-ar-panel">
+          <h2 class="numbers-panel-title">الأشكال — استمعي للاسم</h2>
+          <div class="alphabet-lang-tabs shapes-lang-tabs" role="tablist" aria-label="لغة أسماء الأشكال">
+            <button type="button" class="alphabet-lang-tab" id="shapes-tab-en" role="tab" aria-selected="false" data-shapes-lang="en">
+              🔷 Shapes — English
+            </button>
+            <button type="button" class="alphabet-lang-tab active" id="shapes-tab-ar" role="tab" aria-selected="true" data-shapes-lang="ar">
+              أشكال عربية
+            </button>
+          </div>
+          <div id="shapes-explore-grid" class="tile-grid shapes-ar-grid"></div>
+        </section>
+
+        <section class="lesson-page-panel shapes-game-panel" aria-labelledby="shapes-game-heading">
+          <h2 id="shapes-game-heading" class="numbers-panel-title">لعبة الأشكال ⭐</h2>
+          <p id="shapes-game-hint" class="color-palette-hint"></p>
+          <div class="shapes-game-card">
+            <p id="shapes-game-emoji" class="shapes-game-emoji" aria-hidden="true">⭕</p>
+            <p id="shapes-game-q" class="shapes-game-q"></p>
+            <div id="shapes-game-choices" class="shapes-game-choices"></div>
+            <p id="shapes-game-feedback" class="math-feedback"></p>
+            <button type="button" class="btn btn-secondary btn-fat" id="shapes-game-new">سؤال جديد ✨</button>
+          </div>
+        </section>
+
+        <div class="kid-done-row">
+          <button type="button" class="btn btn-primary btn-fat" id="lesson-done">خلّصتُ الألوان والتلوين!</button>
+          <p class="kid-done-note">نجمتان عند زر الإنجاز؛ ولعبة الأشكال تعطي نجمة لكل إجابة صحيحة ⭐</p>
+        </div>
+      </main>
+
+      <footer class="site-footer"><p><a href="index.html" dir="ltr">← Back home</a></p></footer>
+    </div>
+
+    <div id="mascot-dock" class="mascot-dock">
+      <div class="mascot-bubble" hidden>يا لوحة ألوان!</div>
+      <div style="position: relative; display: inline-block">
+        <span data-kitty-accessory aria-hidden="true"></span>
+        <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="مساعد القطة">
+          <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
+          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
+          <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
+        </svg>
+      </div>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/kitty-learn-colors.js"></script>
+  </body>
+</html>
