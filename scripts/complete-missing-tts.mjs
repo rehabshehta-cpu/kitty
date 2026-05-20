@@ -144,7 +144,7 @@ function buildFullQueue() {
   // phase 2 included for completeness
   const emotions = [
     { key: "happy", ar: "سعيد", en: "Happy" }, { key: "sad", ar: "حزين", en: "Sad" },
-    { key: "angry", ar: "غاضب", en: "Angry" }, { key: "scared", ar: "خائف", en: "Scared" },
+    { key: "angry", ar: "أنا غاضب", en: "Angry" }, { key: "scared", ar: "خائف", en: "Scared" },
     { key: "excited", ar: "متحمس", en: "Excited" }, { key: "sleepy", ar: "نعسان", en: "Sleepy" },
     { key: "sick", ar: "مريض", en: "Sick" }, { key: "proud", ar: "فخور", en: "Proud" },
   ];

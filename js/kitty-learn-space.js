@@ -132,7 +132,14 @@
     var done = document.getElementById("lesson-done");
     if (done) {
       done.addEventListener("click", function () {
-        if (window.KittyLearn) KittyLearn.claimLessonReward("space", 2, lang === "ar" ? "مستكشف فضاء!" : "Space explorer!");
+        if (!window.KittyLearn) return;
+        if (KittyLearn.getProgress().badges.indexOf("space") !== -1) {
+          KittyLearn.mascotSay(lang === "ar" ? "خذتي شارة الفضاء قبل كده! 🏅" : "You already have the Space badge! 🏅");
+          KittyLearn.playSound("tap");
+          return;
+        }
+        KittyLearn.claimLessonReward("space", 2, lang === "ar" ? "مستكشف فضاء!" : "Space explorer!");
+        KittyLearn.unlockBadge("space", lang === "ar" ? "مستكشف الفضاء" : "Space Explorer");
       });
     }
   });

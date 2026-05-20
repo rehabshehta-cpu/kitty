@@ -182,7 +182,13 @@
                     ? "انتهت الجولات! أنت بطل! 🏆"
                     : "All rounds done! You're a champ! 🏆";
               }
-              if (window.KittyLearn) KittyLearn.markGameDone("sound-quiz");
+              if (window.KittyLearn) {
+                KittyLearn.markGameDone("sound-quiz");
+                if (KittyLearn.getProgress().badges.indexOf("quiz") === -1) {
+                  KittyLearn.addStars(2, lang === "ar" ? "لعبة الصوت!" : "Sound quiz champ!");
+                  KittyLearn.unlockBadge("quiz", lang === "ar" ? "أذن ذهبية" : "Golden Ear");
+                }
+              }
             }
           }
         } else {

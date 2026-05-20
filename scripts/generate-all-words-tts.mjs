@@ -436,7 +436,7 @@ async function main() {
   const emotions = [
     { key: "happy", ar: "سعيد", en: "Happy" },
     { key: "sad", ar: "حزين", en: "Sad" },
-    { key: "angry", ar: "غاضب", en: "Angry" },
+    { key: "angry", ar: "أنا غاضب", en: "Angry" },
     { key: "scared", ar: "خائف", en: "Scared" },
     { key: "excited", ar: "متحمس", en: "Excited" },
     { key: "sleepy", ar: "نعسان", en: "Sleepy" },
@@ -475,7 +475,7 @@ async function main() {
     { key: "school", ar: "المدرسة", en: "School" },
     { key: "lunch", ar: "الغداء", en: "Lunch" },
     { key: "play", ar: "اللعب", en: "Play time" },
-    { key: "sleep", ar: "النوم", en: "Sleep" },
+    { key: "sleep", ar: "وقت النوم", en: "Sleep" },
   ];
   routineSteps.forEach((d) => {
     ttsQueue.push({ phrase: d.ar, out: `data/audio/routine/ar/${d.key}.wav`, lang: "ar" });

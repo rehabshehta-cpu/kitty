@@ -15,7 +15,7 @@
     { key: "school", emoji: "🎒", ar: "المدرسة", en: "School" },
     { key: "lunch", emoji: "🥗", ar: "الغداء", en: "Lunch" },
     { key: "play", emoji: "🎈", ar: "اللعب", en: "Play time" },
-    { key: "sleep", emoji: "🌙", ar: "النوم", en: "Sleep" },
+    { key: "sleep", emoji: "🌙", ar: "وقت النوم", en: "Sleep" },
   ];
 
   function nameOf(s) {
@@ -141,7 +141,14 @@
     var done = document.getElementById("lesson-done");
     if (done) {
       done.addEventListener("click", function () {
-        if (window.KittyLearn) KittyLearn.claimLessonReward("routine", 2, lang === "ar" ? "روتين رائع!" : "Great routine!");
+        if (!window.KittyLearn) return;
+        if (KittyLearn.getProgress().badges.indexOf("routine") !== -1) {
+          KittyLearn.mascotSay(lang === "ar" ? "خذتي شارة الروتين قبل كده! 🏅" : "You already have the Routine badge! 🏅");
+          KittyLearn.playSound("tap");
+          return;
+        }
+        KittyLearn.claimLessonReward("routine", 2, lang === "ar" ? "روتين رائع!" : "Great routine!");
+        KittyLearn.unlockBadge("routine", lang === "ar" ? "نجم الروتين" : "Routine Star");
       });
     }
   });

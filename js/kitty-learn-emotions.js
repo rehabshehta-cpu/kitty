@@ -9,7 +9,7 @@
   var emotions = [
     { key: "happy", emoji: "😊", ar: "سعيد", en: "Happy", tipAr: "عندما تفرح، شارك ابتسامتك!", tipEn: "When you're happy, share your smile!" },
     { key: "sad", emoji: "😢", ar: "حزين", en: "Sad", tipAr: "عندما تحزن، احضن من تحب.", tipEn: "When you're sad, hug someone you love." },
-    { key: "angry", emoji: "😠", ar: "غاضب", en: "Angry", tipAr: "خذ نفساً عميقاً وعد للعب بهدوء.", tipEn: "Take a deep breath, then play calmly." },
+    { key: "angry", emoji: "😠", ar: "أنا غاضب", en: "Angry", tipAr: "خذ نفساً عميقاً وعد للعب بهدوء.", tipEn: "Take a deep breath, then play calmly." },
     { key: "scared", emoji: "😨", ar: "خائف", en: "Scared", tipAr: "أخبر ماما أو بابا — هم يحمونك.", tipEn: "Tell a grown-up — they keep you safe." },
     { key: "excited", emoji: "🤩", ar: "متحمس", en: "Excited", tipAr: "حماس جميل! شارك فرحتك بلطف.", tipEn: "Excitement is fun! Share it kindly." },
     { key: "sleepy", emoji: "😴", ar: "نعسان", en: "Sleepy", tipAr: "وقت الراحة — نوم هادئ جميل.", tipEn: "Rest time — cozy sleep helps." },
@@ -115,7 +115,14 @@
     var done = document.getElementById("lesson-done");
     if (done) {
       done.addEventListener("click", function () {
-        if (window.KittyLearn) KittyLearn.claimLessonReward("emotions", 2, lang === "ar" ? "مشاعر جميلة!" : "Great feelings!");
+        if (!window.KittyLearn) return;
+        if (KittyLearn.getProgress().badges.indexOf("emotions") !== -1) {
+          KittyLearn.mascotSay(lang === "ar" ? "خذتي شارة المشاعر قبل كده! 🏅" : "You already have the Feelings badge! 🏅");
+          KittyLearn.playSound("tap");
+          return;
+        }
+        KittyLearn.claimLessonReward("emotions", 2, lang === "ar" ? "مشاعر جميلة!" : "Great feelings!");
+        KittyLearn.unlockBadge("emotions", lang === "ar" ? "صديق المشاعر" : "Feelings Friend");
       });
     }
   });
