@@ -67,7 +67,7 @@
         progress.badges.push("super");
       }
 
-      var acc = ["bow", "glasses", "crown"];
+      var acc = ["bow", "glasses", "crown", "tie", "chef", "crownSpring"];
       var idx = Math.floor(progress.stars / 20);
       if (idx > 0 && idx <= acc.length) {
         var key = acc[idx - 1];
@@ -120,6 +120,12 @@
     equipAccessory: function (key) {
       if (!key || progress.accessories.indexOf(key) === -1) return;
       progress.equippedAccessory = key;
+      saveProgress(progress);
+      applyAccessoryUI();
+    },
+
+    clearAccessory: function () {
+      progress.equippedAccessory = null;
       saveProgress(progress);
       applyAccessoryUI();
     },
@@ -527,15 +533,25 @@
   window.KittyLearn.mascotSay = mascotSay;
 
   function applyAccessoryUI() {
-    var el = document.querySelector("[data-kitty-accessory]");
-    if (!el) return;
-    var map = { bow: "🎀", glasses: "👓", crown: "👑" };
+    var map = { bow: "🎀", glasses: "👓", crown: "👑", tie: "👔", chef: "👨‍🍳", crownSpring: "🌸" };
     var key = progress.equippedAccessory;
-    el.textContent = key && map[key] ? map[key] : "";
-    el.style.fontSize = "1.75rem";
-    el.style.position = "absolute";
-    el.style.top = "-8px";
-    el.style.right = "-4px";
+    var emoji = key && map[key] ? map[key] : "";
+    document.querySelectorAll("[data-kitty-accessory], #kitty-room-accessory").forEach(function (el) {
+      el.textContent = emoji;
+      if (el.id === "kitty-room-accessory") {
+        el.style.fontSize = "clamp(2.5rem, 8vw, 4rem)";
+        el.style.position = "absolute";
+        el.style.top = "8%";
+        el.style.left = "50%";
+        el.style.transform = "translateX(-50%)";
+        el.style.zIndex = "2";
+      } else {
+        el.style.fontSize = "1.75rem";
+        el.style.position = "absolute";
+        el.style.top = "-8px";
+        el.style.right = "-4px";
+      }
+    });
   }
 
   function updateHeaderUI() {

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitty Learn — غرفة القطة 🐱</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/kitty-learn.css" />
+  </head>
+  <body class="page-kitty-room">
+    <div id="loading-screen" class="loading-screen" role="status">
+      <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+      </svg>
+      <p dir="rtl">غرفة القطة<span class="loading-dots"></span></p>
+    </div>
+    <div class="sky-layer" aria-hidden="true"><div class="cloud cloud-lg"></div></div>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-wrap">
+      <header class="site-header kid-header">
+        <a class="logo-link" href="index.html">
+          <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
+          </svg>
+          Kitty Learn
+        </a>
+        <div class="progress-pill">
+          ⭐ <span id="header-stars">0</span>
+          <span aria-hidden="true">·</span>
+          Lv <span id="header-level">1</span>
+        </div>
+        <nav class="nav-links" aria-label="القائمة" dir="ltr">
+          <a href="index.html">Home</a>
+          <a href="emotions.html">Emotions</a>
+          <a href="space.html">Space</a>
+          <a href="routine.html">Routine</a>
+          <a href="kitty-room.html" aria-current="page">Room</a>
+          <a href="quiz.html">Quiz</a>
+          <a href="games.html">Games</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="icon-btn" id="music-toggle" aria-label="موسيقى" aria-pressed="false">🎵</button>
+          <button type="button" class="icon-btn" id="theme-toggle" aria-label="سمة" aria-pressed="false">🌙</button>
+        </div>
+      </header>
+
+      <main class="kitty-room-main">
+        <header class="kid-alphabet-hero">
+          <p class="kid-kicker" dir="ltr">🐱 Kitty Room</p>
+          <h1 class="kid-page-title">غرفة القطة — زيّني صديقتك!</h1>
+          <p class="kid-page-sub" dir="rtl">اجمع النجوم لفتح الإكسسوارات وارتديها على القطة.</p>
+        </header>
+
+        <div class="kitty-room-layout">
+          <section class="kitty-room-stage" aria-label="القطة">
+            <div class="kitty-room-cat-wrap">
+              <span id="kitty-room-accessory" class="kitty-room-accessory" aria-hidden="true"></span>
+              <svg
+                class="kitty-room-cat"
+                viewBox="0 0 220 200"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="قطة كيتي"
+              >
+                <path d="M52 88 Q42 35 58 28 Q72 22 88 62" fill="#FFB896" />
+                <path d="M168 88 Q178 35 162 28 Q148 22 132 62" fill="#FFB896" />
+                <ellipse cx="110" cy="118" rx="78" ry="70" fill="#FFE5CC" />
+                <ellipse cx="62" cy="124" rx="14" ry="10" fill="#FFB8C8" opacity="0.55" />
+                <ellipse cx="158" cy="124" rx="14" ry="10" fill="#FFB8C8" opacity="0.55" />
+                <ellipse cx="82" cy="108" rx="14" ry="18" fill="#3D3558" />
+                <ellipse cx="138" cy="108" rx="14" ry="18" fill="#3D3558" />
+                <ellipse cx="86" cy="102" rx="5" ry="6" fill="#fff" />
+                <ellipse cx="142" cy="102" rx="5" ry="6" fill="#fff" />
+                <path d="M104 128 Q110 136 116 128 Q110 132 104 128" fill="#FF8FAB" />
+                <path d="M92 142 Q110 158 128 142" stroke="#C97B86" stroke-width="4" fill="none" stroke-linecap="round" />
+                <ellipse cx="78" cy="178" rx="22" ry="14" fill="#FFE5CC" />
+                <ellipse cx="142" cy="178" rx="22" ry="14" fill="#FFE5CC" />
+              </svg>
+            </div>
+            <p class="kitty-room-stars-line" dir="rtl">
+              نجومك: ⭐ <strong id="room-stars">0</strong> · المستوى: <strong id="room-level">1</strong>
+            </p>
+          </section>
+
+          <aside class="kitty-room-sidebar lesson-page-panel">
+            <h2 class="numbers-panel-title">الإكسسوارات</h2>
+            <p class="kitty-room-unlock-hint" dir="rtl">كل ٢٠ نجمة تفتح إكسسواراً جديداً!</p>
+            <div class="kitty-room-accessories">
+              <button type="button" class="accessory-slot kitty-room-slot" data-accessory="bow" title="فيونكة (٢٠ نجمة)">🎀</button>
+              <button type="button" class="accessory-slot kitty-room-slot" data-accessory="glasses" title="نظارات (٤٠ نجمة)">👓</button>
+              <button type="button" class="accessory-slot kitty-room-slot" data-accessory="crown" title="تاج (٦٠ نجمة)">👑</button>
+              <button type="button" class="accessory-slot kitty-room-slot" data-accessory="tie" title="ربطة عنق (٨٠ نجمة)">👔</button>
+              <button type="button" class="accessory-slot kitty-room-slot" data-accessory="chef" title="قبعة طاهٍ (١٠٠ نجمة)">👨‍🍳</button>
+              <button type="button" class="accessory-slot kitty-room-slot" data-accessory="crownSpring" title="تاج ربيعي (١٢٠ نجمة)">🌸</button>
+            </div>
+            <button type="button" class="btn btn-secondary btn-fat" id="kitty-room-clear">إزالة الإكسسوار</button>
+
+            <h2 class="numbers-panel-title" style="margin-top: 1.25rem">الشارات</h2>
+            <div class="kitty-room-badges rewards-row">
+              <span class="badge-chip locked" data-badge="star">⭐ Star Starter</span>
+              <span class="badge-chip locked" data-badge="explorer">🧭 Little Explorer</span>
+              <span class="badge-chip locked" data-badge="super">🏆 Super Learner</span>
+              <span class="badge-chip locked" data-badge="alphabet">🔤 Alphabet Friend</span>
+              <span class="badge-chip locked" data-badge="manners">💝 Kind Friend</span>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <footer class="site-footer"><p><a href="index.html" dir="ltr">← Back home</a></p></footer>
+    </div>
+
+    <script src="js/kitty-learn-core.js"></script>
+    <script src="js/config.local.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+      (function () {
+        var accessoryMap = { bow: "🎀", glasses: "👓", crown: "👑", tie: "👔", chef: "👨‍🍳", crownSpring: "🌸" };
+
+        function syncRoom() {
+          if (!window.KittyLearn) return;
+          var p = KittyLearn.getProgress();
+          var stars = document.getElementById("room-stars");
+          var lvl = document.getElementById("room-level");
+          if (stars) stars.textContent = String(p.stars);
+          if (lvl) lvl.textContent = String(p.level);
+          var accEl = document.getElementById("kitty-room-accessory");
+          if (accEl) {
+            var key = p.equippedAccessory;
+            accEl.textContent = key && accessoryMap[key] ? accessoryMap[key] : "";
+          }
+          KittyLearn.updateHeaderUI();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          syncRoom();
+          document.querySelectorAll(".kitty-room-slot").forEach(function (slot) {
+            slot.addEventListener("click", function () {
+              setTimeout(syncRoom, 50);
+            });
+          });
+          var clear = document.getElementById("kitty-room-clear");
+          if (clear) {
+            clear.addEventListener("click", function () {
+              KittyLearn.clearAccessory();
+              syncRoom();
+              KittyLearn.playSound("tap");
+              KittyLearn.mascotSay("قطة بسيطة وجميلة!");
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

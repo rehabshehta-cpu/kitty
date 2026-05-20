@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kitty Learn — كلمات العيلة 💬</title>
+    <title>Kitty Learn — المشاعر 🎭</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,20 +12,17 @@
     />
     <link rel="stylesheet" href="css/kitty-learn.css" />
   </head>
-  <body class="page-family-words">
+  <body class="page-emotions">
     <div id="loading-screen" class="loading-screen" role="status">
       <svg class="loader-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <ellipse cx="110" cy="118" rx="56" ry="50" fill="#FFE5CC" />
       </svg>
-      <p dir="rtl">كلمات حلوة<span class="loading-dots"></span></p>
+      <p dir="rtl">مشاعر فرحة<span class="loading-dots"></span></p>
     </div>
-    <div class="sky-layer" aria-hidden="true">
-      <div class="cloud cloud-sm"></div>
-      <div class="cloud cloud-md"></div>
-    </div>
+    <div class="sky-layer" aria-hidden="true"><div class="cloud cloud-md"></div></div>
     <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
-    <div class="page-wrap alphabet-kid-wrap">
+    <div class="page-wrap">
       <header class="site-header kid-header">
         <a class="logo-link" href="index.html">
           <svg width="44" height="44" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -40,10 +37,11 @@
         </div>
         <nav class="nav-links" aria-label="القائمة" dir="ltr">
           <a href="index.html">Home</a>
-          <a href="emotions.html">Emotions</a>
+          <a href="emotions.html" aria-current="page">Emotions</a>
           <a href="space.html">Space</a>
           <a href="routine.html">Routine</a>
-          <a href="words.html" aria-current="page">Words</a>
+          <a href="alphabet.html">Alphabet</a>
+          <a href="animals.html">Animals</a>
           <a href="kitty-room.html">Room</a>
           <a href="quiz.html">Quiz</a>
           <a href="games.html">Games</a>
@@ -54,46 +52,37 @@
         </div>
       </header>
 
-      <main class="family-words-main">
+      <main class="lesson-main-stack">
         <header class="kid-alphabet-hero">
-          <p class="kid-kicker" dir="ltr">💬 Family words</p>
-          <h1 class="kid-page-title">كلمات من العيلة</h1>
-          <p class="kid-page-sub" dir="rtl">
-            اضغطي على بطاقة لتسمعي الاسم بالعربي. كرّري مع صوتك عشان تحفظيه!
-          </p>
+          <p class="kid-kicker" dir="ltr">🎭 Feelings</p>
+          <h1 class="kid-page-title">تعرّف على مشاعرك — عربي أو إنجليزي!</h1>
+          <p class="kid-page-sub" dir="rtl">اضغط على كل شعور لتسمع اسمه ونصيحة لطيفة.</p>
         </header>
 
-        <section class="lesson-page-panel family-words-panel" aria-labelledby="family-words-heading">
-          <h2 id="family-words-heading" class="numbers-panel-title">اختاري كلمة</h2>
-          <div id="family-word-grid" class="family-word-grid"></div>
-        </section>
-
-        <section class="letter-display kid-letter-card family-word-display" aria-live="polite">
-          <p class="family-display-emoji" id="family-display-emoji" aria-hidden="true">👵</p>
-          <p class="family-display-phrase" id="family-display-phrase">تيتا نورا</p>
-          <p class="family-display-hint" id="family-display-hint">تيتا حبيبة القلب</p>
-          <button type="button" class="btn btn-secondary btn-fat" id="family-speak-btn">🔊 اسمعي تاني</button>
+        <section class="lesson-page-panel">
+          <div class="alphabet-lang-tabs" role="tablist" aria-label="لغة المشاعر">
+            <button type="button" class="alphabet-lang-tab" id="emotions-tab-en" role="tab" aria-selected="false" data-lang="en">🎭 English</button>
+            <button type="button" class="alphabet-lang-tab active" id="emotions-tab-ar" role="tab" aria-selected="true" data-lang="ar">مشاعر عربية</button>
+          </div>
+          <p id="emotions-hint" class="color-palette-hint"></p>
+          <div id="emotions-grid" class="emotion-grid"></div>
+          <p id="emotion-tip" class="emotion-tip" dir="rtl"></p>
         </section>
 
         <div class="kid-done-row">
-          <button type="button" class="btn btn-primary btn-fat" id="family-words-done">خلّصتِ تدريب الكلمات!</button>
-          <p class="kid-done-note" dir="rtl">اضغطي مرة واحدة لمكافأة صغيرة ⭐</p>
+          <button type="button" class="btn btn-primary btn-fat" id="lesson-done">خلّصتُ درس المشاعر!</button>
         </div>
       </main>
 
-      <footer class="site-footer">
-        <p><a href="index.html" dir="ltr">← Back home</a></p>
-      </footer>
+      <footer class="site-footer"><p><a href="index.html" dir="ltr">← Back home</a></p></footer>
     </div>
 
     <div id="mascot-dock" class="mascot-dock">
-      <div class="mascot-bubble" hidden>يلا نقول الكلمات!</div>
+      <div class="mascot-bubble" hidden>كيف تشعر اليوم؟</div>
       <div style="position: relative; display: inline-block">
         <span data-kitty-accessory aria-hidden="true"></span>
         <svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="مساعد القطة">
           <ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC" />
-          <ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558" />
-          <ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558" />
           <path d="M104 128 Q110 134 116 128" fill="#FF8FAB" />
         </svg>
       </div>
@@ -102,6 +91,6 @@
     <script src="js/kitty-learn-core.js"></script>
     <script src="js/config.local.js"></script>
     <script src="js/script.js"></script>
-    <script src="js/kitty-learn-words.js"></script>
+    <script src="js/kitty-learn-emotions.js"></script>
   </body>
 </html>

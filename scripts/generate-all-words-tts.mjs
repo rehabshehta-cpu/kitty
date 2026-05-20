@@ -222,7 +222,10 @@ async function main() {
     "shapes/ar", "shapes/en",
     "numbers/ar", "numbers/en",
     "family",
-    "prayer/ar", "prayer/en"
+    "prayer/ar", "prayer/en",
+    "emotions/ar", "emotions/en",
+    "space/ar", "space/en",
+    "routine/ar", "routine/en"
   ];
   for (const f of folders) {
     fs.mkdirSync(path.join(ROOT, "data", "audio", f), { recursive: true });
@@ -419,6 +422,56 @@ async function main() {
   duas.forEach((d, i) => {
     ttsQueue.push({ phrase: d.ar, out: `data/audio/prayer/ar/dua_${i}.wav`, lang: "ar" });
     ttsQueue.push({ phrase: d.en, out: `data/audio/prayer/en/dua_${i}.wav`, lang: "en" });
+  });
+
+  // 7. المشاعر
+  const emotions = [
+    { key: "happy", ar: "سعيد", en: "Happy" },
+    { key: "sad", ar: "حزين", en: "Sad" },
+    { key: "angry", ar: "غاضب", en: "Angry" },
+    { key: "scared", ar: "خائف", en: "Scared" },
+    { key: "excited", ar: "متحمس", en: "Excited" },
+    { key: "sleepy", ar: "نعسان", en: "Sleepy" },
+    { key: "sick", ar: "مريض", en: "Sick" },
+    { key: "proud", ar: "فخور", en: "Proud" },
+  ];
+  emotions.forEach((d) => {
+    ttsQueue.push({ phrase: d.ar, out: `data/audio/emotions/ar/${d.key}.wav`, lang: "ar" });
+    ttsQueue.push({ phrase: d.en, out: `data/audio/emotions/en/${d.key}.wav`, lang: "en" });
+  });
+
+  // 8. الفضاء
+  const spaceBodies = [
+    { key: "sun", ar: "الشمس", en: "Sun" },
+    { key: "moon", ar: "القمر", en: "Moon" },
+    { key: "mercury", ar: "عطارد", en: "Mercury" },
+    { key: "venus", ar: "الزهرة", en: "Venus" },
+    { key: "earth", ar: "الأرض", en: "Earth" },
+    { key: "mars", ar: "المريخ", en: "Mars" },
+    { key: "jupiter", ar: "المشتري", en: "Jupiter" },
+    { key: "saturn", ar: "زحل", en: "Saturn" },
+    { key: "uranus", ar: "أورانوس", en: "Uranus" },
+    { key: "neptune", ar: "نبتون", en: "Neptune" },
+  ];
+  spaceBodies.forEach((d) => {
+    ttsQueue.push({ phrase: d.ar, out: `data/audio/space/ar/${d.key}.wav`, lang: "ar" });
+    ttsQueue.push({ phrase: d.en, out: `data/audio/space/en/${d.key}.wav`, lang: "en" });
+  });
+
+  // 9. الروتين اليومي
+  const routineSteps = [
+    { key: "wake", ar: "الاستيقاظ", en: "Wake up" },
+    { key: "teeth", ar: "تنظيف الأسنان", en: "Brush teeth" },
+    { key: "wash", ar: "غسل الوجه", en: "Wash face" },
+    { key: "breakfast", ar: "الإفطار", en: "Breakfast" },
+    { key: "school", ar: "المدرسة", en: "School" },
+    { key: "lunch", ar: "الغداء", en: "Lunch" },
+    { key: "play", ar: "اللعب", en: "Play time" },
+    { key: "sleep", ar: "النوم", en: "Sleep" },
+  ];
+  routineSteps.forEach((d) => {
+    ttsQueue.push({ phrase: d.ar, out: `data/audio/routine/ar/${d.key}.wav`, lang: "ar" });
+    ttsQueue.push({ phrase: d.en, out: `data/audio/routine/en/${d.key}.wav`, lang: "en" });
   });
 
   console.log(`إجمالي الملفات المطلوب توليدها: ${ttsQueue.length}`);
