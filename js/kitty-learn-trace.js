@@ -144,7 +144,7 @@
         if (sessionStorage.getItem(traceRewardKey())) {
           if (window.KittyLearn) {
             KittyLearn.mascotSay("برافو! جرّبي حرف تاني 🌟");
-            KittyLearn.playSound("ok");
+            KittyLearn.answerFeedback(true);
           }
           return false;
         }

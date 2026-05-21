@@ -265,14 +265,14 @@
   function rewardCorrect(fb) {
     fb.textContent = "أحسنت! ⭐ أخذتِ نجمة!";
     if (window.KittyLearn) {
-      KittyLearn.playSound("ok");
+      KittyLearn.answerFeedback(true);
       KittyLearn.addStars(1, "إجابة صحيحة!");
     }
   }
 
   function rewardWrong(fb) {
     fb.textContent = "جرّبي تاني 💪";
-    if (window.KittyLearn) KittyLearn.playSound("wrong");
+    if (window.KittyLearn) KittyLearn.answerFeedback(false);
   }
 
   function setupAdd() {

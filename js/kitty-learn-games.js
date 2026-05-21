@@ -131,7 +131,7 @@
         selectedEmoji.classList.remove("selected");
         selectedWord.classList.remove("selected");
         matched++;
-        if (window.KittyLearn) KittyLearn.playSound("ok");
+        if (window.KittyLearn) KittyLearn.answerFeedback(true);
         fb.textContent = "Great match!";
         selectedEmoji = null;
         selectedWord = null;
@@ -142,7 +142,7 @@
           setTimeout(render, 1400);
         }
       } else {
-        if (window.KittyLearn) KittyLearn.playSound("wrong");
+        if (window.KittyLearn) KittyLearn.answerFeedback(false);
         selectedEmoji.classList.add("wrong");
         selectedWord.classList.add("wrong");
         fb.textContent = "Try again!";
@@ -199,13 +199,13 @@
         b.addEventListener("click", function () {
           if (window.KittyLearn) KittyLearn.playSound("tap");
           if (c.name === target.name) {
-            if (window.KittyLearn) KittyLearn.playSound("ok");
+            if (window.KittyLearn) KittyLearn.answerFeedback(true);
             fb.textContent = "Perfect!";
             awardStars(2, "Correct color!");
             if (window.KittyLearn) KittyLearn.markGameDone("color");
             setTimeout(nextRound, 900);
           } else {
-            if (window.KittyLearn) KittyLearn.playSound("wrong");
+            if (window.KittyLearn) KittyLearn.answerFeedback(false);
             fb.textContent = "Not quite — try again!";
           }
         });
@@ -248,14 +248,14 @@
 
     function tryPlaceLetter(slot, i, L) {
       if (L !== answer[i]) {
-        if (window.KittyLearn) KittyLearn.playSound("wrong");
+        if (window.KittyLearn) KittyLearn.answerFeedback(false);
         fb.textContent = "Try another letter!";
         return;
       }
       if (slot.classList.contains("filled")) return;
       slot.textContent = L;
       slot.classList.add("filled");
-      if (window.KittyLearn) KittyLearn.playSound("ok");
+      if (window.KittyLearn) KittyLearn.answerFeedback(true);
       removeLetterFromBank(L);
       clearPick();
       checkDone();
@@ -387,7 +387,7 @@
           if (first.dataset.sym === wrap.dataset.sym) {
             first.classList.add("matched");
             wrap.classList.add("matched");
-            if (window.KittyLearn) KittyLearn.playSound("ok");
+            if (window.KittyLearn) KittyLearn.answerFeedback(true);
             pairsFound++;
             first = null;
             lock = false;
@@ -398,7 +398,7 @@
               setTimeout(render, 2000);
             }
           } else {
-            if (window.KittyLearn) KittyLearn.playSound("wrong");
+            if (window.KittyLearn) KittyLearn.answerFeedback(false);
             setTimeout(function () {
               first.classList.remove("flipped");
               wrap.classList.remove("flipped");

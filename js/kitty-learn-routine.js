@@ -82,7 +82,7 @@
           doneSet[s.key] = true;
           row.classList.add("done");
           row.querySelector(".routine-check").textContent = "✅";
-          if (window.KittyLearn) KittyLearn.playSound("ok");
+          if (window.KittyLearn) KittyLearn.answerFeedback(true);
         } else {
           if (window.KittyLearn) KittyLearn.playSound("tap");
         }

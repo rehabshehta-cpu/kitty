@@ -167,7 +167,7 @@
               fb.textContent = lang === "ar" ? "أحسنت! ⭐" : "Great! ⭐";
             }
             if (window.KittyLearn) {
-              KittyLearn.playSound("ok");
+              KittyLearn.answerFeedback(true);
               KittyLearn.addStars(1, lang === "ar" ? "إجابة صحيحة!" : "Correct answer!");
             }
             if (roundIndex < rounds.length - 1) {
@@ -196,7 +196,7 @@
             fb.dir = lang === "ar" ? "rtl" : "ltr";
             fb.textContent = lang === "ar" ? "جرّب مرة أخرى 💪" : "Try again 💪";
           }
-          if (window.KittyLearn) KittyLearn.playSound("wrong");
+          if (window.KittyLearn) KittyLearn.answerFeedback(false);
         }
       });
       choices.appendChild(b);

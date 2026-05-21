@@ -1,0 +1,743 @@
+/* =============================================================================
+   Kitty Learn — Parent Control Lock
+   Soft pastel UI: timer badge, settings modal, rest overlay
+   ============================================================================= */
+
+/* --- Timer badge (visible while lock mode is on) --- */
+.parent-timer-badge {
+  position: fixed;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--butter), var(--peach));
+  border-radius: 999px;
+  box-shadow: 0 4px 18px var(--shadow);
+  pointer-events: none;
+  animation: parent-badge-in 0.45s ease;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.parent-timer-badge.is-low {
+  background: linear-gradient(135deg, #ffd6a5, #ffb4a2);
+  animation: parent-badge-pulse 1.2s ease-in-out infinite;
+}
+
+.parent-timer-badge.is-paused {
+  background: linear-gradient(135deg, var(--lavender-deep), var(--sky-deep));
+  animation: none;
+}
+
+@keyframes parent-badge-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes parent-badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* --- Parent settings header button --- */
+.parent-settings-btn {
+  font-size: 1.15rem;
+}
+
+/* --- Shared modal backdrop --- */
+.parent-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(74, 68, 88, 0.45);
+  backdrop-filter: blur(6px);
+  animation: parent-fade-in 0.3s ease;
+}
+
+.parent-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+@keyframes parent-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- Settings modal panel --- */
+.parent-settings-panel {
+  width: min(100%, 420px);
+  max-height: min(92vh, 640px);
+  overflow-y: auto;
+  padding: 1.75rem 1.5rem 1.5rem;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px rgba(74, 68, 88, 0.28);
+  animation: parent-panel-pop 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+body.dark-playful .parent-settings-panel {
+  background: rgba(45, 38, 64, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@keyframes parent-panel-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.parent-settings-panel h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  text-align: center;
+}
+
+.parent-settings-kicker {
+  margin: 0 0 1.25rem;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+/* --- Toggle row --- */
+.parent-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--lavender), var(--sky));
+  border-radius: var(--radius-lg);
+}
+
+body.dark-playful .parent-toggle-row {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.parent-toggle-row strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.parent-toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.parent-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.parent-toggle-slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background: rgba(107, 98, 128, 0.35);
+  border-radius: 999px;
+  transition: background 0.25s;
+}
+
+.parent-toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  left: 3px;
+  top: 3px;
+  background: var(--white);
+  border-radius: 50%;
+  transition: transform 0.25s;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.parent-toggle-switch input:checked + .parent-toggle-slider {
+  background: linear-gradient(135deg, var(--mint-deep), var(--mint));
+}
+
+.parent-toggle-switch input:checked + .parent-toggle-slider::before {
+  transform: translateX(22px);
+}
+
+.parent-toggle-switch input:focus-visible + .parent-toggle-slider {
+  outline: 2px solid var(--peach-deep);
+  outline-offset: 2px;
+}
+
+/* --- Play time options --- */
+.parent-field-label {
+  display: block;
+  margin: 0 0 0.65rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.parent-time-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.55rem;
+  margin-bottom: 1.15rem;
+}
+
+.parent-time-option {
+  position: relative;
+}
+
+.parent-time-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.parent-time-option span {
+  display: block;
+  padding: 0.7rem 0.5rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  box-shadow: 0 3px 10px var(--shadow);
+}
+
+body.dark-playful .parent-time-option span {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.parent-time-option input:checked + span {
+  border-color: var(--mint-deep);
+  background: linear-gradient(135deg, var(--mint), var(--butter));
+  transform: translateY(-2px);
+}
+
+.parent-time-option input:focus-visible + span {
+  outline: 2px solid var(--peach-deep);
+  outline-offset: 2px;
+}
+
+/* --- PIN digit inputs --- */
+.parent-pin-group {
+  margin-bottom: 1rem;
+}
+
+.parent-pin-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.parent-pin-digit {
+  width: 3rem;
+  height: 3.25rem;
+  padding: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  border: 2px solid var(--lavender-deep);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--ink);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  -moz-appearance: textfield;
+}
+
+.parent-pin-digit::-webkit-outer-spin-button,
+.parent-pin-digit::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body.dark-playful .parent-pin-digit {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--ink);
+}
+
+.parent-pin-digit:focus {
+  outline: none;
+  border-color: var(--peach-deep);
+  box-shadow: 0 0 0 3px rgba(255, 184, 168, 0.45);
+  transform: scale(1.04);
+}
+
+.parent-pin-row.is-error .parent-pin-digit {
+  border-color: #e87878;
+  animation: parent-shake 0.45s ease;
+}
+
+@keyframes parent-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.parent-form-msg {
+  min-height: 1.35rem;
+  margin: 0.35rem 0 0;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #c45c5c;
+}
+
+.parent-form-msg.is-ok {
+  color: #3d9a6a;
+}
+
+.parent-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 1.15rem;
+}
+
+.parent-settings-actions .btn {
+  min-width: 7.5rem;
+}
+
+/* --- Start session control --- */
+.parent-session-section {
+  margin-bottom: 1.15rem;
+  padding: 1rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--butter), var(--mint));
+  border-radius: var(--radius-lg);
+  box-shadow: 0 3px 12px var(--shadow);
+}
+
+body.dark-playful .parent-session-section {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.parent-session-status {
+  margin: 0 0 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.parent-session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: center;
+}
+
+.parent-start-session-btn,
+.parent-pause-btn,
+.parent-resume-btn {
+  flex: 1 1 7.5rem;
+  max-width: 16rem;
+}
+
+.parent-start-session-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+/* --- Parent dashboard --- */
+.parent-dashboard {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 3px 12px var(--shadow);
+}
+
+body.dark-playful .parent-dashboard {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.parent-dashboard-title {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.parent-dashboard-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.parent-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  box-shadow: 0 0 0 3px rgba(107, 98, 128, 0.15);
+}
+
+.parent-status-dot--active {
+  background: #3d9a6a;
+  box-shadow: 0 0 0 3px rgba(61, 154, 106, 0.25);
+}
+
+.parent-status-dot--paused {
+  background: #e8a838;
+  box-shadow: 0 0 0 3px rgba(232, 168, 56, 0.25);
+}
+
+.parent-status-dot--locked {
+  background: #c45c5c;
+  box-shadow: 0 0 0 3px rgba(196, 92, 92, 0.25);
+}
+
+.parent-status-dot--idle {
+  background: var(--ink-soft);
+}
+
+.parent-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.parent-dash-stat {
+  padding: 0.65rem 0.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--lavender), var(--blush));
+  border-radius: var(--radius-md);
+}
+
+body.dark-playful .parent-dash-stat {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.parent-dash-stat-wide {
+  grid-column: 1 / -1;
+}
+
+.parent-dash-label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.parent-dash-stat strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+/* --- Smart toast notifications --- */
+.parent-toast-host {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  width: min(100% - 2rem, 22rem);
+}
+
+.parent-toast {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--white);
+  border-radius: 999px;
+  box-shadow: 0 8px 28px rgba(74, 68, 88, 0.22);
+  opacity: 0;
+  transform: translateY(16px) scale(0.95);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.parent-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.parent-toast.is-hiding {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.parent-toast--warning {
+  background: linear-gradient(135deg, var(--butter), var(--peach));
+}
+
+.parent-toast--urgent {
+  background: linear-gradient(135deg, #ffd6a5, #ffb4a2);
+  animation: parent-toast-urgent 0.8s ease-in-out infinite;
+}
+
+.parent-toast--final {
+  background: linear-gradient(135deg, var(--lavender-deep), #c9b8ff);
+  font-size: 1.08rem;
+}
+
+@keyframes parent-toast-urgent {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.02);
+  }
+}
+
+body.parent-locked .parent-toast-host {
+  z-index: 9998;
+}
+
+/* --- Rest / lock overlay --- */
+.parent-lock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  background: linear-gradient(165deg, #2d2640 0%, #4a3d6b 45%, #3d3558 100%);
+  animation: parent-fade-in 0.5s ease;
+}
+
+.parent-lock-overlay[hidden] {
+  display: none !important;
+}
+
+.parent-lock-stars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.parent-lock-stars span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  animation: parent-star-twinkle 3s ease-in-out infinite;
+}
+
+@keyframes parent-star-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+/* Sleeping kitty (CSS animation) */
+.parent-sleep-kitty {
+  position: relative;
+  width: min(220px, 55vw);
+  margin-bottom: 1.25rem;
+  animation: parent-kitty-breathe 3s ease-in-out infinite;
+}
+
+@keyframes parent-kitty-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(4px) scale(1.02);
+  }
+}
+
+.parent-sleep-kitty .parent-zzz {
+  position: absolute;
+  top: -8%;
+  right: 8%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: rgba(255, 251, 255, 0.85);
+  animation: parent-zzz-float 2.4s ease-in-out infinite;
+}
+
+.parent-sleep-kitty .parent-zzz:nth-child(2) {
+  top: -18%;
+  right: 22%;
+  font-size: 1rem;
+  animation-delay: 0.6s;
+}
+
+.parent-sleep-kitty .parent-zzz:nth-child(3) {
+  top: -28%;
+  right: 34%;
+  font-size: 0.75rem;
+  animation-delay: 1.2s;
+}
+
+@keyframes parent-zzz-float {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0) scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.05);
+  }
+}
+
+.parent-lock-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  color: #fff4cc;
+}
+
+.parent-lock-sub {
+  margin: 0 0 1.5rem;
+  max-width: 22rem;
+  color: rgba(245, 240, 255, 0.88);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.parent-unlock-box {
+  width: min(100%, 320px);
+  padding: 1.25rem 1rem 1rem;
+  background: rgba(255, 251, 255, 0.1);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.parent-unlock-box .parent-field-label {
+  color: rgba(245, 240, 255, 0.92);
+  text-align: center;
+}
+
+.parent-unlock-box .parent-pin-digit {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.parent-unlock-msg {
+  min-height: 1.35rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffb4b4;
+}
+
+.parent-unlock-msg.is-ok {
+  color: #9ae8bf;
+}
+
+/* --- Locked body state: block app interaction --- */
+body.parent-locked .page-wrap,
+body.parent-locked .mascot-dock,
+body.parent-locked .sky-layer,
+body.parent-locked #confetti-canvas {
+  pointer-events: none !important;
+  user-select: none;
+}
+
+body.parent-locked .page-wrap {
+  filter: blur(3px) saturate(0.85);
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .parent-timer-badge {
+    top: auto;
+    bottom: 5.5rem;
+    right: 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  .parent-toast-host {
+    bottom: 5rem;
+  }
+
+  .parent-pin-digit {
+    width: 2.65rem;
+    height: 2.85rem;
+    font-size: 1.25rem;
+  }
+
+  .parent-settings-panel {
+    padding: 1.35rem 1.1rem 1.1rem;
+  }
+}

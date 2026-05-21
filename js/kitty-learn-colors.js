@@ -301,14 +301,14 @@
             solved = true;
             if (fb) fb.textContent = shapesLang === "ar" ? "أحسنت! ⭐ نجمة!" : "Great! ⭐ You got a star!";
             if (window.KittyLearn) {
-              KittyLearn.playSound("ok");
+              KittyLearn.answerFeedback(true);
               KittyLearn.addStars(1, shapesLang === "ar" ? "شكل صحيح!" : "Correct shape!");
             }
           }
         } else {
           if (fb)
             fb.textContent = shapesLang === "ar" ? "جرّبي تاني 💪" : "Try again 💪";
-          if (window.KittyLearn) KittyLearn.playSound("wrong");
+          if (window.KittyLearn) KittyLearn.answerFeedback(false);
         }
       });
       chEl.appendChild(b);

@@ -344,31 +344,63 @@
     refreshArabVoice();
   }
 
-  KittyLearn.speakKids = function (text) {
-    if (!window.speechSynthesis || !text) return;
+  /** Reliable TTS — fixes Chrome/Edge cancel+speak race and empty voice list. */
+  function safeSpeechSpeak(utterance, voicePicker) {
+    if (!window.speechSynthesis || !utterance) return;
+    resumeAudio();
+    if (voicePicker) {
+      var v = voicePicker();
+      if (v) {
+        utterance.voice = v;
+        utterance.lang = v.lang || utterance.lang;
+      }
+    }
     try {
       speechSynthesis.cancel();
     } catch (e) {}
+    clearTimeout(safeSpeechSpeak._t);
+    safeSpeechSpeak._t = setTimeout(function () {
+      refreshSpeechVoices();
+      if (voicePicker) {
+        var v2 = voicePicker();
+        if (v2) {
+          utterance.voice = v2;
+          utterance.lang = v2.lang || utterance.lang;
+        }
+      }
+      try {
+        if (speechSynthesis.paused) speechSynthesis.resume();
+      } catch (e2) {}
+      try {
+        speechSynthesis.speak(utterance);
+      } catch (e3) {}
+    }, 120);
+  }
+
+  KittyLearn.speakKids = function (text) {
+    if (!text) return;
     var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
     u.rate = 0.79;
     u.pitch = 1.42;
     u.volume = 1;
-    if (kidsVoiceCached) u.voice = kidsVoiceCached;
-    speechSynthesis.speak(u);
+    safeSpeechSpeak(u, function () {
+      if (!kidsVoiceCached) refreshKidsVoice();
+      return kidsVoiceCached;
+    });
   };
 
   KittyLearn.speakArabic = function (text) {
-    if (!window.speechSynthesis || !text) return;
-    try {
-      speechSynthesis.cancel();
-    } catch (e2) {}
+    if (!text) return;
     var u = new SpeechSynthesisUtterance(text);
     u.lang = arabVoiceCached && arabVoiceCached.lang ? arabVoiceCached.lang : "ar-SA";
     u.rate = 0.82;
     u.pitch = 1.32;
     u.volume = 1;
-    if (arabVoiceCached) u.voice = arabVoiceCached;
-    speechSynthesis.speak(u);
+    safeSpeechSpeak(u, function () {
+      if (!arabVoiceCached) refreshArabVoice();
+      return arabVoiceCached;
+    });
   };
 
   /**
@@ -427,6 +459,8 @@
   if (window.speechSynthesis) {
     speechSynthesis.onvoiceschanged = refreshSpeechVoices;
     refreshSpeechVoices();
+    setTimeout(refreshSpeechVoices, 300);
+    setTimeout(refreshSpeechVoices, 1000);
   }
 
   var musicOn = false;
@@ -516,7 +550,49 @@
   window.KittyLearn.celebrate = celebrate;
 
   /* --- Mascot --- */
-  function mascotSay(text) {
+  function ensureMascotDock() {
+    if (document.getElementById("mascot-dock")) return;
+    var dock = document.createElement("div");
+    dock.id = "mascot-dock";
+    dock.className = "mascot-dock";
+    dock.innerHTML =
+      '<div class="mascot-bubble" hidden dir="rtl">أحسنت!</div>' +
+      '<div class="mascot-cat-wrap">' +
+      '<span data-kitty-accessory aria-hidden="true"></span>' +
+      '<svg class="dock-cat" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-label="Kitty helper">' +
+      '<path d="M52 88 Q42 35 58 28 Q72 22 88 62" fill="#FFB896"/>' +
+      '<path d="M168 88 Q178 35 162 28 Q148 22 132 62" fill="#FFB896"/>' +
+      '<ellipse cx="110" cy="118" rx="72" ry="64" fill="#FFE5CC"/>' +
+      '<ellipse cx="82" cy="108" rx="12" ry="16" fill="#3D3558"/>' +
+      '<ellipse cx="138" cy="108" rx="12" ry="16" fill="#3D3558"/>' +
+      '<ellipse cx="85" cy="102" rx="4" ry="5" fill="#fff"/>' +
+      '<ellipse cx="141" cy="102" rx="4" ry="5" fill="#fff"/>' +
+      '<path d="M104 128 Q110 134 116 128" fill="#FF8FAB"/>' +
+      "</svg></div>";
+    document.body.appendChild(dock);
+    ensureMascotMoodFace();
+    applyAccessoryUI();
+    bindMascotDockClick(dock);
+  }
+
+  function bindMascotDockClick(dock) {
+    if (!dock || dock.getAttribute("data-kitty-bound") === "1") return;
+    dock.setAttribute("data-kitty-bound", "1");
+    var cat = dock.querySelector(".dock-cat");
+    if (!cat) return;
+    cat.addEventListener("click", function () {
+      KittyLearn.meow((Math.random() * 2) | 0);
+      var ar = isPageArabic();
+      var msgs = ar
+        ? ["أحسنت!", "يلا نكمل!", "أنا فخورة بيك!", "نجرب تاني؟"]
+        : ["You are doing paw-some!", "Keep learning — I believe in you!", "Tap lessons for stars!"];
+      mascotSay(msgs[(Math.random() * msgs.length) | 0]);
+    });
+  }
+
+  function mascotSay(text, opts) {
+    opts = opts || {};
+    ensureMascotDock();
     var dock = document.getElementById("mascot-dock");
     if (!dock) return;
     var bubble = dock.querySelector(".mascot-bubble");
@@ -524,13 +600,115 @@
     bubble.textContent = text;
     bubble.setAttribute("dir", /[\u0600-\u06FF]/.test(text) ? "rtl" : "ltr");
     bubble.hidden = false;
+    bubble.classList.toggle("mascot-bubble--praise", !!opts.praise);
+    dock.classList.toggle("mascot-dock--praise", !!opts.praise);
     clearTimeout(mascotSay._t);
+    clearTimeout(mascotSay._praiseT);
+    var duration = opts.duration || (opts.praise ? 6000 : 4500);
     mascotSay._t = setTimeout(function () {
       bubble.hidden = true;
-    }, 4500);
+      bubble.classList.remove("mascot-bubble--praise");
+    }, duration);
+    if (opts.praise) {
+      mascotSay._praiseT = setTimeout(function () {
+        dock.classList.remove("mascot-dock--praise");
+      }, duration);
+    }
   }
 
   window.KittyLearn.mascotSay = mascotSay;
+
+  /* --- Mascot answer feedback (voice + animation) --- */
+  var CORRECT_PHRASES = ["Great job!", "Well done!", "You are amazing!"];
+  var ENCOURAGE_PHRASES = [
+    "Try again 💡",
+    "Don't worry, you can do it!",
+    "Let's try once more 🙂",
+  ];
+  var CORRECT_PHRASES_AR = ["أحسنت!", "رائع!", "ممتاز!"];
+  var ENCOURAGE_PHRASES_AR = [
+    "جرّبي تاني 💡",
+    "ولا يهمك، تقدري!",
+    "يلا نجرب تاني 🙂",
+  ];
+
+  function isPageArabic() {
+    var lang = (document.documentElement.getAttribute("lang") || "").toLowerCase();
+    return lang.indexOf("ar") === 0;
+  }
+
+  function pickPhrase(list) {
+    return list[(Math.random() * list.length) | 0];
+  }
+
+  function speakMascotPhrase(displayMsg, useArabic) {
+    var spoken = displayMsg.replace(" 💡", "").replace(" 🙂", "").replace(/\s+/g, " ").trim();
+    if (!spoken) return;
+    setTimeout(function () {
+      if (useArabic && KittyLearn.speakArabic) KittyLearn.speakArabic(spoken);
+      else if (KittyLearn.speakKids) KittyLearn.speakKids(spoken);
+    }, 280);
+  }
+
+  function ensureMascotMoodFace() {
+    var dock = document.getElementById("mascot-dock");
+    if (!dock || dock.querySelector(".mascot-mood-face")) return;
+    var face = document.createElement("span");
+    face.className = "mascot-mood-face";
+    face.setAttribute("aria-hidden", "true");
+    dock.appendChild(face);
+  }
+
+  function mascotSetMood(mood, faceEmoji) {
+    var dock = document.getElementById("mascot-dock");
+    if (!dock) return;
+    ensureMascotMoodFace();
+    dock.classList.remove("mascot-mood-happy", "mascot-mood-sad");
+    var face = dock.querySelector(".mascot-mood-face");
+    if (mood) dock.classList.add(mood);
+    if (face) face.textContent = faceEmoji || "";
+    clearTimeout(mascotSetMood._t);
+    if (mood) {
+      mascotSetMood._t = setTimeout(function () {
+        dock.classList.remove("mascot-mood-happy", "mascot-mood-sad");
+        if (face) face.textContent = "";
+      }, mood === "mascot-mood-happy" ? 950 : 1300);
+    }
+  }
+
+  function mascotAnswerFeedback(isCorrect) {
+    ensureMascotDock();
+    var ar = isPageArabic();
+    var msg;
+    var spoken;
+    if (isCorrect) {
+      if (ar) {
+        msg = "أحسنت! ⭐";
+        spoken = "أحسنت";
+      } else {
+        msg = pickPhrase(CORRECT_PHRASES);
+        spoken = msg;
+      }
+      mascotSay(msg, { praise: true, duration: 6000 });
+      speakMascotPhrase(spoken, ar);
+      mascotSetMood("mascot-mood-happy", "😊");
+      if (KittyLearn.meow) KittyLearn.meow(0);
+    } else {
+      msg = pickPhrase(ar ? ENCOURAGE_PHRASES_AR : ENCOURAGE_PHRASES);
+      spoken = msg.replace(" 💡", "").replace(" 🙂", "").trim();
+      mascotSay(msg, { praise: true, duration: 5000 });
+      speakMascotPhrase(spoken, ar);
+      mascotSetMood("mascot-mood-sad", "🤔");
+    }
+  }
+
+  KittyLearn.answerFeedback = function (isCorrect) {
+    resumeAudio();
+    playSound(isCorrect ? "ok" : "wrong");
+    mascotAnswerFeedback(isCorrect);
+  };
+
+  KittyLearn.mascotAnswerFeedback = mascotAnswerFeedback;
 
   function applyAccessoryUI() {
     var map = { bow: "🎀", glasses: "👓", crown: "👑", tie: "👔", chef: "👨‍🍳", crownSpring: "🌸" };
@@ -656,21 +834,11 @@
   }
 
   function initMascotDock() {
+    ensureMascotDock();
     var dock = document.getElementById("mascot-dock");
     if (!dock) return;
-    var cat = dock.querySelector(".dock-cat");
-    if (cat) {
-      cat.addEventListener("click", function () {
-        KittyLearn.meow((Math.random() * 2) | 0);
-        var msgs = [
-          "You are doing paw-some!",
-          "Keep learning — I believe in you!",
-          "Tap lessons for stars and badges!",
-          "Try the games page for extra fun!",
-        ];
-        mascotSay(msgs[(Math.random() * msgs.length) | 0]);
-      });
-    }
+    ensureMascotMoodFace();
+    bindMascotDockClick(dock);
   }
 
   function initAccessoryClicks() {
@@ -711,4 +879,14 @@
       }, 700);
     }
   });
+
+  /* --- Parent lock module (timer, PIN, screen-time overlay) --- */
+  var plCss = document.createElement("link");
+  plCss.rel = "stylesheet";
+  plCss.href = "css/kitty-learn-parent-lock.css";
+  document.head.appendChild(plCss);
+  var plJs = document.createElement("script");
+  plJs.src = "js/kitty-learn-parent-lock.js";
+  plJs.defer = true;
+  document.head.appendChild(plJs);
 })();
