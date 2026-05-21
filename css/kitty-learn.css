@@ -1160,6 +1160,17 @@ body.dark-playful .trace-notebook {
   -webkit-text-stroke: 3px rgba(244, 114, 182, 0.4);
 }
 
+.trace-guide-word {
+  white-space: nowrap;
+  max-width: 92%;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.personal-trace-zone .trace-stack {
+  min-height: 280px;
+}
+
 #trace-canvas {
   position: relative;
   z-index: 2;

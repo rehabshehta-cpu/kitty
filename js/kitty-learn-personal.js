@@ -8,6 +8,7 @@
   var VERIFY_KEY = "kittyLearn_personalParentOk";
 
   var state = {
+    screen: "pick",
     mode: "child",
     parentUnlocked: false,
     selectedChildId: null,
@@ -16,6 +17,10 @@
     learnWordIndex: 0,
     packSearch: "",
     editingWordId: null,
+    writingActive: false,
+    writingWordIndex: 0,
+    writingMode: "trace",
+    editingWritingWordId: null,
   };
 
   var FOCUS_OPTIONS = [
@@ -102,6 +107,79 @@
     }
   }
 
+  function normalizeWritingAnswer(s) {
+    return String(s || "")
+      .trim()
+      .replace(/\s+/g, " ");
+  }
+
+  function writingAnswersMatch(expected, typed) {
+    var a = normalizeWritingAnswer(expected);
+    var b = normalizeWritingAnswer(typed);
+    if (!a || !b) return false;
+    if (a === b) return true;
+    return a.toLowerCase() === b.toLowerCase();
+  }
+
+  /** English encouragement for name writing (Ali, Mama, etc.). */
+  function writingAnswerFeedback(isCorrect) {
+    if (!window.KittyLearn) return;
+    if (isCorrect) {
+      KittyLearn.playSound("ok");
+      if (KittyLearn.mascotSay) KittyLearn.mascotSay("Great job! ⭐", { praise: true, duration: 5500 });
+      if (KittyLearn.speakKids) KittyLearn.speakKids("Great job!");
+      if (KittyLearn.celebrate) KittyLearn.celebrate(1);
+    } else {
+      KittyLearn.playSound("wrong");
+      if (KittyLearn.mascotSay) KittyLearn.mascotSay("Try again 🙂", { praise: true, duration: 4500 });
+      if (KittyLearn.speakKids) KittyLearn.speakKids("Try again");
+    }
+  }
+
+  function getActiveWritingWords(child) {
+    return Store.getActiveWritingWords(child.id);
+  }
+
+  function wordLang(text) {
+    return /[\u0600-\u06FF]/.test(text) ? "ar" : "en";
+  }
+
+  function traceZoneHtml() {
+    return (
+      '<section class="trace-zone kid-panel personal-trace-zone" aria-labelledby="personal-trace-heading">' +
+      '<h2 id="personal-trace-heading" class="trace-zone-title" dir="rtl">✏️ تمرين الكتابة على الخطوط</h2>' +
+      '<p class="trace-zone-hint" dir="rtl">' +
+      "الكلمة الرمادية الخفيفة «مرشد» — امشي فوقها بالقلم أو الإصبع من غير ما تطلع برّه الخطوط قدر الإمكان." +
+      "</p>" +
+      '<div class="trace-notebook" dir="ltr">' +
+      '<div class="trace-lines-bg" aria-hidden="true"></div>' +
+      '<div class="trace-stack" id="trace-stack">' +
+      '<span class="trace-guide-letter" id="trace-guide" aria-hidden="true">A</span>' +
+      '<canvas id="trace-canvas" aria-label="لوحة الكتابة"></canvas></div></div>' +
+      '<div class="trace-actions">' +
+      '<button type="button" class="btn btn-secondary btn-fat" id="trace-clear">🧹 امسحي وحاولي تاني</button>' +
+      '<button type="button" class="btn btn-primary btn-fat" id="trace-done">⭐ خلّصت الكتابة!</button>' +
+      "</div></section>"
+    );
+  }
+
+  function typeZoneHtml(word) {
+    return (
+      '<div class="personal-writing-type-card">' +
+      '<p class="personal-writing-prompt">Write: <strong>' +
+      esc(word.text) +
+      "</strong></p>" +
+      '<div class="personal-field personal-writing-field">' +
+      '<label for="personal-writing-input" class="visually-hidden">اكتبي الكلمة</label>' +
+      '<input type="text" id="personal-writing-input" class="personal-writing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type here..." maxlength="60">' +
+      "</div>" +
+      '<p class="personal-writing-msg" id="personal-writing-msg" role="status"></p>' +
+      '<div class="personal-writing-actions">' +
+      '<button type="button" class="btn btn-primary btn-fat" id="personal-writing-check">✓ Check</button>' +
+      "</div></div>"
+    );
+  }
+
   function parentPinRequired() {
     try {
       var raw = localStorage.getItem("kittyLearn_parentLock_v1");
@@ -168,7 +246,130 @@
   }
 
   /* =========================================================================
-     Child learning mode
+     Child picker (multi-profile login)
+     ========================================================================= */
+
+  function childAvatar(name, age) {
+    var avatars = ["👶", "🧒", "👧", "👦", "🌟", "🐱"];
+    var n = (name || "").charCodeAt(0) || 0;
+    return avatars[(n + (age || 0)) % avatars.length];
+  }
+
+  function updateChromeVisibility() {
+    var bar = document.querySelector(".personal-mode-bar");
+    if (bar) bar.hidden = state.screen === "pick";
+  }
+
+  function enterChildDashboard(childId) {
+    Store.setCurrentChildId(childId);
+    state.screen = "app";
+    state.mode = "child";
+    state.selectedPackId = null;
+    state.writingActive = false;
+    state.writingWordIndex = 0;
+    playTap();
+    render();
+    var child = Store.getChild(childId);
+    if (child && KittyLearn.mascotSay) {
+      KittyLearn.mascotSay("أهلاً " + child.name + "! 📚");
+    }
+  }
+
+  function goToChildPicker() {
+    state.screen = "pick";
+    state.writingActive = false;
+    state.selectedPackId = null;
+    playTap();
+    render();
+  }
+
+  function renderChildPicker(root) {
+    var children = Store.listChildren();
+    var html =
+      '<div class="personal-picker">' +
+      '<div class="personal-hero"><h1>👶 مين بيتعلّم النهارده؟</h1>' +
+      "<p>اختاري ملف الطفل أو أضيفي واحد جديد</p></div>";
+
+    if (children.length) {
+      html += '<div class="personal-picker-grid">';
+      children.forEach(function (c, i) {
+        var prog = Store.getProgress(c.id);
+        html +=
+          '<button type="button" class="personal-picker-card" data-pick-child="' +
+          esc(c.id) +
+          '" style="animation-delay:' +
+          i * 0.06 +
+          's">' +
+          '<span class="personal-picker-avatar" aria-hidden="true">' +
+          childAvatar(c.name, c.age) +
+          "</span>" +
+          "<strong>" +
+          esc(c.name) +
+          "</strong>" +
+          "<small>عمر " +
+          (c.age || "?") +
+          " · " +
+          (prog ? prog.packCount : 0) +
+          " مجموعة</small></button>";
+      });
+      html += "</div>";
+    } else {
+      html +=
+        '<div class="personal-empty personal-panel"><p>🐱 مفيش أطفال مسجّلين لسه.</p>' +
+        "<p class=\"personal-hint\">أضيفي أول ملف طفل تحت 👇</p></div>";
+    }
+
+    html +=
+      '<div class="personal-panel personal-picker-add">' +
+      "<h2>➕ طفل جديد</h2>" +
+      '<form id="personal-picker-add-form" class="personal-form-grid">' +
+      '<div class="personal-field"><label>اسم الطفل</label>' +
+      '<input type="text" id="personal-picker-name" required maxlength="40" placeholder="مثال: علي"></div>' +
+      '<div class="personal-field"><label>العمر</label>' +
+      '<input type="number" id="personal-picker-age" min="2" max="12" placeholder="3"></div>' +
+      '<button type="submit" class="btn btn-primary">إنشاء ودخول</button></form></div>';
+
+    if (children.length) {
+      html +=
+        '<p class="personal-picker-parent-link">' +
+        '<button type="button" class="btn btn-secondary btn-small" id="personal-picker-parent">👩‍👧 إعدادات الوالدين</button></p>';
+    }
+
+    html += "</div>";
+    root.innerHTML = html;
+
+    root.querySelectorAll("[data-pick-child]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        enterChildDashboard(btn.getAttribute("data-pick-child"));
+      });
+    });
+
+    var addForm = $("personal-picker-add-form");
+    if (addForm) {
+      addForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = ($("personal-picker-name").value || "").trim();
+        var age = $("personal-picker-age").value;
+        if (!name) return;
+        var c = Store.addChild({ name: name, age: age });
+        if (c) {
+          playOk();
+          enterChildDashboard(c.id);
+        }
+      });
+    }
+
+    var parentBtn = $("personal-picker-parent");
+    if (parentBtn) {
+      parentBtn.addEventListener("click", function () {
+        state.screen = "app";
+        setMode("parent");
+      });
+    }
+  }
+
+  /* =========================================================================
+     Child learning mode (dashboard)
      ========================================================================= */
 
   function renderChildHome(root) {
@@ -181,23 +382,60 @@
       return;
     }
 
+    if (state.writingActive) {
+      renderWritingPractice(root, child);
+      return;
+    }
+
     if (state.selectedPackId) {
       renderPackLearn(root, child);
       return;
     }
 
     var packs = child.packs || [];
+    var writingWords = getActiveWritingWords(child);
+    var prog = Store.getProgress(child.id);
     var html =
+      '<div class="personal-dashboard-top">' +
+      '<button type="button" class="btn btn-secondary btn-small" id="personal-switch-child">🔄 تبديل الطفل</button></div>' +
       '<div class="personal-hero">' +
       "<h1>مرحبًا " +
       esc(child.name) +
       "! ✨</h1>" +
-      "<p>اختاري مجموعة كلمات ويلا نتعلّم مع Kitty</p></div>";
+      "<p>اختاري مجموعة كلمات أو تمرين الكتابة مع Kitty</p></div>";
 
-    if (!packs.length) {
+    if (prog) {
+      html +=
+        '<div class="personal-dashboard-stats personal-panel">' +
+        '<div class="personal-stat"><span class="personal-stat-num">' +
+        prog.packCount +
+        '</span><span class="personal-stat-label">مجموعات</span></div>' +
+        '<div class="personal-stat"><span class="personal-stat-num">' +
+        prog.practicedWords +
+        "/" +
+        prog.totalWords +
+        '</span><span class="personal-stat-label">كلمات</span></div>' +
+        '<div class="personal-stat"><span class="personal-stat-num">' +
+        prog.writingWordCount +
+        '</span><span class="personal-stat-label">كتابة</span></div></div>';
+    }
+
+    if (writingWords.length) {
+      html +=
+        '<button type="button" class="personal-writing-entry" id="personal-open-writing">' +
+        '<span class="writing-entry-icon">✏️</span>' +
+        "<strong>تمرين الكتابة والتتبّع</strong>" +
+        "<small>" +
+        writingWords.length +
+        " كلمة للتدريب</small></button>";
+    }
+
+    if (!packs.length && !writingWords.length) {
       html +=
         '<div class="personal-empty personal-panel"><p>📦 مفيش مجموعات كلمات بعد.</p>' +
-        "<p class=\"personal-hint\">الوالد يقدر يضيف مجموعة من تبويب للوالدين.</p></div>";
+        "<p class=\"personal-hint\">الوالد يقدر يضيف مجموعة أو كلمات كتابة من تبويب للوالدين.</p></div>";
+    } else if (!packs.length) {
+      html += '<div class="personal-empty personal-panel"><p>📦 مفيش مجموعات كلمات بعد.</p></div>';
     } else {
       html += '<div class="personal-pack-grid">';
       packs.forEach(function (pack, i) {
@@ -218,6 +456,21 @@
     }
 
     root.innerHTML = html;
+    var switchBtn = $("personal-switch-child");
+    if (switchBtn) {
+      switchBtn.addEventListener("click", goToChildPicker);
+    }
+    var openWriting = $("personal-open-writing");
+    if (openWriting) {
+      openWriting.addEventListener("click", function () {
+        playTap();
+        state.writingActive = true;
+        state.writingWordIndex = 0;
+        state.writingMode = "trace";
+        render();
+        mascotEncourage(child.name);
+      });
+    }
     root.querySelectorAll("[data-pack-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         playTap();
@@ -436,6 +689,199 @@
     return null;
   }
 
+  function renderWritingPractice(root, child) {
+    var words = getActiveWritingWords(child);
+    if (!words.length) {
+      state.writingActive = false;
+      renderChildHome(root);
+      return;
+    }
+
+    var idx = Math.min(state.writingWordIndex, words.length - 1);
+    if (idx < 0) idx = 0;
+    state.writingWordIndex = idx;
+    var word = words[idx];
+    var practiced = words.filter(function (w) {
+      return (w.correctCount || 0) > 0;
+    }).length;
+    var isTrace = state.writingMode !== "type";
+
+    var html =
+      '<div class="personal-back-row">' +
+      '<button type="button" class="btn btn-secondary btn-small" id="personal-back-writing">← الرئيسية</button></div>' +
+      '<div class="personal-hero"><h1>✏️ تمرين الكتابة والتتبّع</h1>' +
+      "<p>تقدّمك: " +
+      practiced +
+      "/" +
+      words.length +
+      " كلمة</p></div>" +
+      '<div class="personal-view-toggle personal-writing-mode-toggle">' +
+      '<button type="button" class="' +
+      (isTrace ? "active" : "") +
+      '" data-writing-mode="trace">✏️ تتبّع (زي الحروف)</button>' +
+      '<button type="button" class="' +
+      (!isTrace ? "active" : "") +
+      '" data-writing-mode="type">⌨️ كتابة</button></div>' +
+      '<p class="personal-writing-prompt">Write: <strong dir="auto">' +
+      esc(word.text) +
+      "</strong></p>" +
+      (isTrace ? traceZoneHtml() : typeZoneHtml(word)) +
+      '<div class="personal-learn-nav">' +
+      '<button type="button" class="btn btn-secondary btn-small" id="personal-writing-prev"' +
+      (idx <= 0 ? " disabled" : "") +
+      ">← السابق</button>" +
+      "<span>" +
+      (idx + 1) +
+      " / " +
+      words.length +
+      "</span>" +
+      '<button type="button" class="btn btn-secondary btn-small" id="personal-writing-next"' +
+      (idx >= words.length - 1 ? " disabled" : "") +
+      ">التالي →</button></div>";
+
+    root.innerHTML = html;
+    bindWritingEvents(root, child, words, word);
+  }
+
+  function handleTraceWordDone(child, words, word) {
+    var ok = window.TracePad && TracePad.rewardIfDrawn({ useSession: false, quiet: true });
+    if (!ok) {
+      if (window.TracePad) TracePad.rewardIfDrawn({ useSession: false });
+      return;
+    }
+
+    Store.recordWritingSuccess(child.id, word.id);
+    writingAnswerFeedback(true);
+    setTimeout(function () {
+      if (state.writingWordIndex < words.length - 1) {
+        state.writingWordIndex++;
+        render();
+      } else if (KittyLearn.mascotSay) {
+        KittyLearn.mascotSay("All done! 🎉");
+        if (KittyLearn.speakKids) KittyLearn.speakKids("Well done!");
+      }
+    }, 1200);
+  }
+
+  function bindWritingEvents(root, child, words, word) {
+    var back = $("personal-back-writing");
+    if (back) {
+      back.addEventListener("click", function () {
+        playTap();
+        state.writingActive = false;
+        state.writingWordIndex = 0;
+        render();
+      });
+    }
+
+    root.querySelectorAll("[data-writing-mode]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var mode = btn.getAttribute("data-writing-mode");
+        if (mode === state.writingMode) return;
+        playTap();
+        state.writingMode = mode;
+        render();
+      });
+    });
+
+    if (state.writingMode !== "type" && window.TracePad) {
+      TracePad.init();
+      if (TracePad.setWord) {
+        TracePad.setWord(word.text, wordLang(word.text));
+      } else {
+        TracePad.setLetter(word.text, wordLang(word.text));
+      }
+      TracePad.bindActions({
+        onDone: function () {
+          handleTraceWordDone(child, words, word);
+        },
+      });
+    } else {
+      bindWritingTypeEvents(child, words, word);
+    }
+
+    var prev = $("personal-writing-prev");
+    var next = $("personal-writing-next");
+    if (prev) {
+      prev.addEventListener("click", function () {
+        if (state.writingWordIndex > 0) {
+          state.writingWordIndex--;
+          playTap();
+          render();
+        }
+      });
+    }
+    if (next) {
+      next.addEventListener("click", function () {
+        if (state.writingWordIndex < words.length - 1) {
+          state.writingWordIndex++;
+          playTap();
+          render();
+        }
+      });
+    }
+  }
+
+  function bindWritingTypeEvents(child, words, word) {
+    var input = $("personal-writing-input");
+    var msg = $("personal-writing-msg");
+    var check = $("personal-writing-check");
+
+    function doCheck() {
+      if (!input || !word) return;
+      var typed = input.value;
+      if (!normalizeWritingAnswer(typed)) {
+        if (msg) {
+          msg.textContent = "اكتبي الكلمة الأول!";
+          msg.className = "personal-writing-msg personal-writing-msg--warn";
+        }
+        playTap();
+        return;
+      }
+      if (writingAnswersMatch(word.text, typed)) {
+        Store.recordWritingSuccess(child.id, word.id);
+        writingAnswerFeedback(true);
+        if (msg) {
+          msg.textContent = "✓ Correct!";
+          msg.className = "personal-writing-msg personal-writing-msg--ok";
+        }
+        input.classList.add("personal-writing-input--ok");
+        setTimeout(function () {
+          if (state.writingWordIndex < words.length - 1) {
+            state.writingWordIndex++;
+            render();
+          } else if (KittyLearn.mascotSay) {
+            KittyLearn.mascotSay("All done! 🎉");
+            if (KittyLearn.speakKids) KittyLearn.speakKids("Well done!");
+          }
+        }, 1200);
+      } else {
+        writingAnswerFeedback(false);
+        if (msg) {
+          msg.textContent = "Not quite — try again!";
+          msg.className = "personal-writing-msg personal-writing-msg--err";
+        }
+        input.classList.add("personal-writing-input--err");
+        setTimeout(function () {
+          input.classList.remove("personal-writing-input--err");
+        }, 600);
+      }
+    }
+
+    if (check) check.addEventListener("click", doCheck);
+    if (input) {
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          doCheck();
+        }
+      });
+      setTimeout(function () {
+        input.focus();
+      }, 80);
+    }
+  }
+
   /* =========================================================================
      Parent mode
      ========================================================================= */
@@ -483,7 +929,7 @@
     state.parentUnlocked = true;
 
     var data = Store.getAll();
-    state.selectedChildId = state.selectedChildId || data.activeChildId;
+    state.selectedChildId = state.selectedChildId || Store.getCurrentChildId() || (data.children[0] && data.children[0].id);
     var child = state.selectedChildId ? Store.getChild(state.selectedChildId) : null;
 
     var html =
@@ -491,14 +937,18 @@
       "<p>أنشئي ملف الطفل ومجموعات كلمات خاصة</p></div>";
 
     html += renderChildProfileSection(data, child);
-    if (child) html += renderPackSection(child);
+    if (child) {
+      html += renderPackSection(child);
+      html += renderWritingSection(child);
+    }
     root.innerHTML = html;
     bindParentEvents(child);
   }
 
   function renderChildProfileSection(data, child) {
     var html = '<div class="personal-panel"><h2>👶 ملفات الأطفال</h2><div class="personal-child-list">';
-    data.children.forEach(function (c) {
+    Store.listChildren().forEach(function (c) {
+      var merged = Store.getChild(c.id);
       var active = child && c.id === child.id;
       html +=
         '<div class="personal-child-chip' +
@@ -510,8 +960,10 @@
         "</strong><small>عمر " +
         (c.age || "?") +
         " · " +
-        (c.packs || []).length +
-        " مجموعة</small></div>" +
+        ((merged && merged.packs) || []).length +
+        " مجموعة · " +
+        esc(c.id) +
+        "</small></div>" +
         '<button type="button" class="btn btn-small btn-secondary" data-del-child="' +
         esc(c.id) +
         '">🗑</button></div>';
@@ -547,7 +999,7 @@
 
     if (child) {
       html +=
-        '<button type="button" class="btn btn-secondary" id="personal-set-active">⭐ اجعليه النشط</button>';
+        '<button type="button" class="btn btn-secondary" id="personal-set-active">⭐ اجعليه الافتراضي عند الدخول</button>';
     }
 
     html += "</div></form></div>";
@@ -659,6 +1111,87 @@
     return html;
   }
 
+  function renderWritingSection(child) {
+    var wp = child.writingPractice || { enabled: false, words: [] };
+    var words = wp.words || [];
+    var activeCount = words.filter(function (w) {
+      return w.active !== false;
+    }).length;
+
+    var html =
+      '<div class="personal-panel"><h2>✏️ Writing Practice — ' +
+      esc(child.name) +
+      "</h2>" +
+      '<p class="personal-hint">أضيفي أسماء للكتابة: اسم الطفل، ماما، بابا، جدّة…</p>' +
+      '<label class="personal-writing-toggle">' +
+      '<input type="checkbox" id="personal-writing-enabled"' +
+      (wp.enabled ? " checked" : "") +
+      "> تفعيل تمرين الكتابة لهذا الطفل</label>" +
+      '<form id="personal-writing-word-form" class="personal-form-grid" style="margin:1rem 0">' +
+      '<div class="personal-field"><label>كلمة جديدة</label>' +
+      '<input type="text" id="personal-writing-word-text" placeholder="Ali, Mama, Baba, Grandma…" maxlength="40"></div>' +
+      '<button type="submit" class="btn btn-primary btn-small">+ إضافة</button></form>';
+
+    if (words.length) {
+      html +=
+        '<p class="personal-hint">اختاري الكلمات اللي الطفل يتدرب عليها (' +
+        activeCount +
+        "/" +
+        words.length +
+        " مفعّلة)</p>" +
+        '<div class="personal-writing-word-list">';
+      words.forEach(function (w) {
+        html +=
+          '<div class="personal-word-list-item personal-writing-list-item">' +
+          '<label class="personal-writing-active-label">' +
+          '<input type="checkbox" data-writing-active="' +
+          esc(w.id) +
+          '"' +
+          (w.active !== false ? " checked" : "") +
+          "> " +
+          '<span>' +
+          esc(w.text) +
+          "</span></label>" +
+          "<small>" +
+          (w.correctCount || 0) +
+          "x ✓</small>" +
+          '<span><button type="button" class="btn btn-small btn-secondary" data-edit-writing-word="' +
+          esc(w.id) +
+          '">✏️</button> ' +
+          '<button type="button" class="btn btn-small btn-secondary" data-del-writing-word="' +
+          esc(w.id) +
+          '">🗑</button></span></div>';
+      });
+      html += "</div>";
+    } else {
+      html += '<p class="personal-empty" style="padding:1rem">مفيش كلمات كتابة بعد.</p>';
+    }
+
+    var editWord = state.editingWritingWordId
+      ? (words.filter(function (w) {
+          return w.id === state.editingWritingWordId;
+        })[0] || null)
+      : null;
+
+    if (editWord) {
+      html +=
+        '<div class="personal-word-editor">' +
+        "<h4>تعديل كلمة الكتابة</h4>" +
+        '<form id="personal-writing-edit-form" class="personal-form-grid">' +
+        '<div class="personal-field"><label>الكلمة</label>' +
+        '<input type="text" id="personal-writing-edit-text" required maxlength="40" value="' +
+        esc(editWord.text) +
+        '"></div>' +
+        '<div class="personal-actions">' +
+        '<button type="submit" class="btn btn-primary btn-small">حفظ</button>' +
+        '<button type="button" class="btn btn-secondary btn-small" id="personal-cancel-writing-edit">إلغاء</button>' +
+        "</div></form></div>";
+    }
+
+    html += "</div>";
+    return html;
+  }
+
   function bindParentEvents(child) {
     document.querySelectorAll("[data-child-id]").forEach(function (el) {
       el.addEventListener("click", function (e) {
@@ -666,6 +1199,7 @@
         state.selectedChildId = el.getAttribute("data-child-id");
         state.selectedPackId = null;
         state.editingWordId = null;
+        state.editingWritingWordId = null;
         playTap();
         render();
       });
@@ -677,8 +1211,11 @@
         var id = btn.getAttribute("data-del-child");
         if (!confirm("حذف ملف الطفل وكل مجموعاته؟")) return;
         Store.deleteChild(id);
-        state.selectedChildId = Store.getAll().activeChildId;
+        state.selectedChildId = Store.getCurrentChildId();
         state.selectedPackId = null;
+        if (!Store.listChildren().length || !Store.getCurrentChildId()) {
+          state.screen = "pick";
+        }
         render();
       });
     });
@@ -787,6 +1324,78 @@
         submitWordForm(child);
       });
     }
+
+    var writingEnabled = $("personal-writing-enabled");
+    if (writingEnabled && child) {
+      writingEnabled.addEventListener("change", function () {
+        Store.updateWritingPractice(child.id, { enabled: writingEnabled.checked });
+        playTap();
+        if (KittyLearn.playSound) KittyLearn.playSound("ok");
+        render();
+      });
+    }
+
+    var writingForm = $("personal-writing-word-form");
+    if (writingForm && child) {
+      writingForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var text = ($("personal-writing-word-text").value || "").trim();
+        if (!text) return;
+        Store.addWritingWord(child.id, text);
+        $("personal-writing-word-form").reset();
+        playTap();
+        if (KittyLearn.playSound) KittyLearn.playSound("ok");
+        render();
+      });
+    }
+
+    document.querySelectorAll("[data-writing-active]").forEach(function (cb) {
+      cb.addEventListener("change", function () {
+        if (!child) return;
+        Store.updateWritingWord(child.id, cb.getAttribute("data-writing-active"), { active: cb.checked });
+        playTap();
+      });
+    });
+
+    document.querySelectorAll("[data-edit-writing-word]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.editingWritingWordId = btn.getAttribute("data-edit-writing-word");
+        playTap();
+        render();
+      });
+    });
+
+    document.querySelectorAll("[data-del-writing-word]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!child || !confirm("حذف كلمة الكتابة؟")) return;
+        var wid = btn.getAttribute("data-del-writing-word");
+        Store.deleteWritingWord(child.id, wid);
+        if (state.editingWritingWordId === wid) state.editingWritingWordId = null;
+        render();
+      });
+    });
+
+    var writingEditForm = $("personal-writing-edit-form");
+    if (writingEditForm && child && state.editingWritingWordId) {
+      writingEditForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var text = ($("personal-writing-edit-text").value || "").trim();
+        if (!text) return;
+        Store.updateWritingWord(child.id, state.editingWritingWordId, { text: text });
+        state.editingWritingWordId = null;
+        playTap();
+        if (KittyLearn.playSound) KittyLearn.playSound("ok");
+        render();
+      });
+    }
+
+    var cancelWritingEdit = $("personal-cancel-writing-edit");
+    if (cancelWritingEdit) {
+      cancelWritingEdit.addEventListener("click", function () {
+        state.editingWritingWordId = null;
+        render();
+      });
+    }
   }
 
   function submitWordForm(child) {
@@ -843,12 +1452,29 @@
   function render() {
     var root = $("personal-root");
     if (!root) return;
-    if (state.mode === "child") renderChildHome(root);
-    else renderParent(root);
+    updateChromeVisibility();
+
+    if (state.screen === "pick") {
+      renderChildPicker(root);
+      return;
+    }
+
+    if (state.mode === "child") {
+      if (!Store.getActiveChild()) {
+        state.screen = "pick";
+        renderChildPicker(root);
+        return;
+      }
+      renderChildHome(root);
+    } else {
+      renderParent(root);
+    }
   }
 
   function setMode(mode) {
     state.mode = mode;
+    state.screen = "app";
+    if (mode === "parent") state.writingActive = false;
     $("personal-mode-child").classList.toggle("active", mode === "child");
     $("personal-mode-parent").classList.toggle("active", mode === "parent");
     $("personal-mode-child").setAttribute("aria-selected", mode === "child" ? "true" : "false");
@@ -857,10 +1483,23 @@
   }
 
   function init() {
-    var data = Store.getAll();
-    state.selectedChildId = data.activeChildId;
+    var currentId = Store.getCurrentChildId();
+    var children = Store.listChildren();
+
+    if (currentId && Store.getChild(currentId)) {
+      state.screen = "app";
+      state.mode = "child";
+    } else {
+      state.screen = "pick";
+    }
+
+    state.selectedChildId = currentId || (children[0] && children[0].id);
 
     $("personal-mode-child").addEventListener("click", function () {
+      if (!Store.getActiveChild()) {
+        goToChildPicker();
+        return;
+      }
       playTap();
       setMode("child");
     });
@@ -873,12 +1512,14 @@
 
     render();
 
-    setTimeout(function () {
-      var child = Store.getActiveChild();
-      if (child && KittyLearn.mascotSay) {
-        KittyLearn.mascotSay("أهلاً " + child.name + "! 📚");
-      }
-    }, 800);
+    if (state.screen === "app") {
+      setTimeout(function () {
+        var child = Store.getActiveChild();
+        if (child && KittyLearn.mascotSay) {
+          KittyLearn.mascotSay("أهلاً " + child.name + "! 📚");
+        }
+      }, 800);
+    }
   }
 
   if (document.readyState === "loading") {

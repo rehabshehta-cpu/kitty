@@ -395,6 +395,332 @@ body.dark-playful .personal-word-list-item {
   margin-bottom: 1rem;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Writing Practice */
+.personal-writing-entry {
+  display: block;
+  width: 100%;
+  max-width: 22rem;
+  margin: 0 auto 1.25rem;
+  padding: 1.1rem 1rem;
+  text-align: center;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(145deg, var(--sky), var(--mint));
+  box-shadow: 0 6px 20px var(--shadow);
+  cursor: pointer;
+  font-family: var(--font-display);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: personal-card-pop 0.35s ease backwards;
+}
+
+.personal-writing-entry:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px var(--shadow);
+}
+
+.personal-writing-entry .writing-entry-icon {
+  display: block;
+  font-size: 2.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.personal-writing-entry strong {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.personal-writing-entry small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.personal-writing-card {
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: 1.35rem 1.25rem;
+  background: linear-gradient(165deg, var(--white), var(--sky));
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 30px var(--shadow);
+  animation: personal-panel-in 0.4s ease;
+}
+
+body.dark-playful .personal-writing-card {
+  background: rgba(45, 38, 64, 0.92);
+}
+
+.personal-writing-prompt {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 4.5vw, 1.6rem);
+  text-align: center;
+  margin: 0 0 0.75rem;
+  color: var(--ink);
+}
+
+.personal-writing-char-step {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 0.85rem;
+  color: var(--ink-soft);
+}
+
+.personal-writing-char-step strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--peach-deep);
+}
+
+.personal-writing-mode-toggle {
+  margin-bottom: 0.85rem;
+}
+
+.personal-trace-zone {
+  margin-bottom: 1rem;
+}
+
+.personal-writing-type-card {
+  max-width: 24rem;
+  margin: 0 auto 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(165deg, var(--white), var(--blush));
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+body.dark-playful .personal-writing-type-card {
+  background: rgba(45, 38, 64, 0.92);
+}
+
+.personal-writing-prompt strong {
+  color: var(--peach-deep);
+  font-size: 1.15em;
+}
+
+.personal-writing-field {
+  margin-bottom: 0.65rem;
+}
+
+.personal-writing-input {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.personal-writing-input--ok {
+  border-color: var(--mint-deep) !important;
+  box-shadow: 0 0 0 3px rgba(154, 232, 191, 0.45) !important;
+}
+
+.personal-writing-input--err {
+  border-color: #c45c5c !important;
+  animation: personal-writing-shake 0.45s ease;
+}
+
+@keyframes personal-writing-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+.personal-writing-msg {
+  min-height: 1.4rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 0.65rem;
+}
+
+.personal-writing-msg--ok {
+  color: #2a9d6a;
+}
+
+.personal-writing-msg--err {
+  color: #c45c5c;
+}
+
+.personal-writing-msg--warn {
+  color: var(--ink-soft);
+}
+
+.personal-writing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.personal-writing-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0.5rem 0;
+}
+
+.personal-writing-toggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--mint-deep);
+}
+
+.personal-writing-word-list {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.personal-writing-list-item {
+  flex-wrap: wrap;
+}
+
+.personal-writing-active-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 1 1 auto;
+}
+
+.personal-writing-active-label input {
+  accent-color: var(--mint-deep);
+}
+
+.personal-writing-list-item small {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Multi-child picker */
+.personal-picker {
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.personal-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.personal-picker-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.15rem 0.85rem;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(145deg, var(--butter), var(--sky));
+  box-shadow: 0 6px 18px var(--shadow);
+  cursor: pointer;
+  font-family: var(--font-display);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: personal-card-pop 0.35s ease backwards;
+}
+
+body.dark-playful .personal-picker-card {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.personal-picker-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 28px var(--shadow);
+}
+
+.personal-picker-avatar {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.personal-picker-card strong {
+  font-size: 1.1rem;
+}
+
+.personal-picker-card small {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.personal-picker-add {
+  margin-top: 0.5rem;
+}
+
+.personal-picker-add h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.personal-picker-parent-link {
+  text-align: center;
+  margin: 1rem 0 0;
+}
+
+.personal-dashboard-top {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.personal-dashboard-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.personal-stat {
+  flex: 1 1 5rem;
+  min-width: 4.5rem;
+}
+
+.personal-stat-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--peach-deep);
+}
+
+.personal-stat-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-top: 0.15rem;
+}
+
 @media (max-width: 480px) {
   .personal-mode-btn {
     font-size: 0.85rem;

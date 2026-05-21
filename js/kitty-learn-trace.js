@@ -9,9 +9,10 @@
   var drawing = false;
   var currentLang = "en";
   var currentChar = "A";
+  var resizeListenerBound = false;
 
   function layoutCanvas() {
-    if (!canvas) return;
+    if (!canvas || !ctx) return;
     var stack = document.getElementById("trace-stack");
     if (!stack) return;
     var rect = stack.getBoundingClientRect();
@@ -32,9 +33,22 @@
 
   function setupCanvas() {
     canvas = document.getElementById("trace-canvas");
-    if (!canvas) return;
+    if (!canvas) {
+      ctx = null;
+      return false;
+    }
     ctx = canvas.getContext("2d");
+    if (!canvas.dataset.tracePadBound) {
+      bindDrawing();
+      canvas.dataset.tracePadBound = "1";
+    }
     layoutCanvas();
+    return true;
+  }
+
+  function ensureResizeListener() {
+    if (resizeListenerBound) return;
+    resizeListenerBound = true;
     window.addEventListener("resize", debounceResize, { passive: true });
   }
 
@@ -117,57 +131,120 @@
     canvas.addEventListener("touchend", endDraw);
   }
 
-  window.TracePad = {
-    setLetter: function (charStr, lang) {
-      currentChar = charStr || "?";
-      currentLang = lang || "en";
-      var guide = document.getElementById("trace-guide");
-      if (guide) {
-        guide.textContent = currentChar;
-        guide.classList.toggle("trace-guide-ar", lang === "ar");
-        guide.classList.toggle("trace-guide-en", lang !== "ar");
-      }
+  function applyGuideClasses(guide, lang, isWord) {
+    guide.classList.remove("trace-guide-ar", "trace-guide-en", "trace-guide-word");
+    guide.classList.toggle("trace-guide-ar", lang === "ar");
+    guide.classList.toggle("trace-guide-en", lang !== "ar");
+    if (isWord) guide.classList.add("trace-guide-word");
+  }
+
+  function updateGuide(text, lang, isWord) {
+    currentChar = text || "?";
+    currentLang = lang || "en";
+    var guide = document.getElementById("trace-guide");
+    if (!guide) {
       clearDrawing();
+      return;
+    }
+    guide.textContent = text;
+    applyGuideClasses(guide, lang, isWord);
+    if (isWord) {
+      var len = Math.max(1, Array.from(text).length);
+      var maxRem = Math.min(7.5, Math.max(2.6, 18 / len));
+      var vw = Math.min(16, 88 / len);
+      guide.style.fontSize = "clamp(" + (maxRem * 0.55) + "rem, " + vw + "vw, " + maxRem + "rem)";
+      guide.style.letterSpacing = len > 5 ? "0.01em" : "0.03em";
+    } else {
+      guide.style.fontSize = "";
+      guide.style.letterSpacing = "";
+    }
+    clearDrawing();
+  }
+
+  function isWordGuide(text) {
+    return Array.from(String(text || "")).length > 1;
+  }
+
+  window.TracePad = {
+    init: function () {
+      ensureResizeListener();
+      return setupCanvas();
+    },
+
+    setLetter: function (charStr, lang) {
+      updateGuide(charStr, lang, false);
+    },
+
+    setWord: function (text, lang) {
+      updateGuide(text, lang, true);
     },
 
     clear: clearDrawing,
 
-    rewardIfDrawn: function () {
+    hasInk: hasInk,
+
+    rewardIfDrawn: function (options) {
+      options = options || {};
       if (!hasInk()) {
-        if (window.KittyLearn) {
-          KittyLearn.mascotSay("جرّبي تمشي فوق الحرف بالقلم الأول! ✏️");
+        if (!options.quiet && window.KittyLearn) {
+          var wordHint = isWordGuide(currentChar);
+          KittyLearn.mascotSay(
+            wordHint
+              ? "جرّبي تمشي فوق الكلمة بالقلم الأول! ✏️"
+              : "جرّبي تمشي فوق الحرف بالقلم الأول! ✏️"
+          );
           KittyLearn.playSound("tap");
         }
         return false;
       }
-      try {
-        if (sessionStorage.getItem(traceRewardKey())) {
-          if (window.KittyLearn) {
-            KittyLearn.mascotSay("برافو! جرّبي حرف تاني 🌟");
-            KittyLearn.answerFeedback(true);
+
+      if (options.useSession !== false) {
+        try {
+          if (sessionStorage.getItem(traceRewardKey())) {
+            if (!options.quiet && window.KittyLearn) {
+              KittyLearn.mascotSay("برافو! جرّبي حرف تاني 🌟");
+              KittyLearn.answerFeedback(true);
+            }
+            return false;
           }
-          return false;
-        }
-        sessionStorage.setItem(traceRewardKey(), "1");
-      } catch (e) {}
-      if (window.KittyLearn) KittyLearn.addStars(1, "أحسنت!");
+          sessionStorage.setItem(traceRewardKey(), "1");
+        } catch (e) {}
+      }
+
+      if (options.onReward) {
+        options.onReward();
+      } else if (window.KittyLearn) {
+        KittyLearn.addStars(1, "أحسنت!");
+      }
       return true;
+    },
+
+    bindActions: function (opts) {
+      opts = opts || {};
+      var clr = document.getElementById(opts.clearId || "trace-clear");
+      var done = document.getElementById(opts.doneId || "trace-done");
+      if (clr) {
+        clr.onclick = function () {
+          clearDrawing();
+          if (opts.onClear) opts.onClear();
+          else if (window.KittyLearn) KittyLearn.playSound("tap");
+        };
+      }
+      if (done) {
+        done.onclick = function () {
+          if (opts.onDone) {
+            opts.onDone();
+          } else {
+            TracePad.rewardIfDrawn();
+          }
+        };
+      }
     },
   };
 
   document.addEventListener("DOMContentLoaded", function () {
-    setupCanvas();
-    bindDrawing();
-    var clr = document.getElementById("trace-clear");
-    var done = document.getElementById("trace-done");
-    if (clr)
-      clr.addEventListener("click", function () {
-        clearDrawing();
-        if (window.KittyLearn) KittyLearn.playSound("tap");
-      });
-    if (done)
-      done.addEventListener("click", function () {
-        TracePad.rewardIfDrawn();
-      });
+    if (!document.getElementById("trace-canvas")) return;
+    TracePad.init();
+    TracePad.bindActions();
   });
 })();
